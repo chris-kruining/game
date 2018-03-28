@@ -6,11 +6,14 @@ import Background from './graphics/elements/background.js';
 import Sprite from './graphics/elements/sprite.js';
 import Vector2 from '../math/vector2.js';
 import Animation from './graphics/animation.js';
+import Resources from './network/resources.js';
 
 export default class Scene {
     constructor()
     {
         this.renderer = new Renderer();
+        
+        console.log(Resources.forrest);
         
         let forrest = new Texture(this.renderer, 'img/digimon/maps/forrest.png');
         forrest.position = new Vector2(800, 0);
