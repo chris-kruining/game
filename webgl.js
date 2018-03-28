@@ -1,5 +1,78 @@
 'use strict';
 
+function ease(callback, options = {})
+{
+    let {duration, easing} = Object.assign({
+        duration: 300,
+        easing: 'easeInOutCubic',
+    }, options);
+    
+    let easingFunctions = {
+        linear: t => t,
+        easeInQuad: t => easingFunctions.easeIn(t, 2),
+        easeOutQuad: t => easingFunctions.easeOut(t, 2),
+        easeInOutQuad: t => easingFunctions.easeInOut(t, 2),
+        easeInCubic: t => easingFunctions.easeIn(t, 3),
+        easeOutCubic: t => easingFunctions.easeOut(t, 3),
+        easeInOutCubic: t => easingFunctions.easeInOut(t, 3),
+        easeInQuart: t => easingFunctions.easeIn(t, 4),
+        easeOutQuart: t => easingFunctions.easeOut(t, 4),
+        easeInOutQuart: t => easingFunctions.easeInOut(t, 4),
+        easeInQuint: t => easingFunctions.easeIn(t, 5),
+        easeOutQuint: t => easingFunctions.easeOut(t, 5),
+        easeInOutQuint: t => easingFunctions.easeInOut(t, 5),
+        easeIn: (t, d = 2) => t ** d,
+        easeOut: (t, d = 2) => 1 - (1 - t) ** d,
+        easeInOut: (t, d = 2) => t ** d / (t ** d + (1 - t) ** d),
+    };
+    
+    let match = easing.match(/(.+)-(\d+)/);
+    
+    if(easingFunctions.hasOwnProperty(easing))
+    {
+        easing = easingFunctions[easing];
+    }
+    else if(match !== null && easingFunctions.hasOwnProperty(match[1]))
+    {
+        easing = t => easingFunctions[match[1]](t, match[2]);
+    }
+    else
+    {
+        throw new Error('easing is not valid');
+    }
+    
+    return new Promise(r =>
+    {
+        let start;
+        let elapsed;
+        
+        let animation = (time = 0) =>
+        {
+            if(!start)
+            {
+                start = time;
+            }
+            
+            elapsed = duration === 1
+                ? duration
+                : time - start;
+            
+            callback(easing(elapsed / duration));
+            
+            if(elapsed < duration)
+            {
+                requestAnimationFrame(time => animation(time));
+            }
+            else
+            {
+                r();
+            }
+        };
+        
+        animation();
+    });
+}
+
 class Vector2 {
     constructor(x, y)
     {
@@ -49,7 +122,7 @@ class Vector2 {
             y = x.y;
             x = x.x;
         }
-        else if(Number.isInteger(x) && y === undefined)
+        else if(!Number.isNaN(x) && y === undefined)
         {
             y = x;
         }
@@ -290,40 +363,42 @@ class Matrix4
         this._points = new Float32Array(points || 16);
     }
     
+    multiply(matrix)
+    {
+        let a = this._points;
+        let b = matrix._points;
+        
+        a[ 0] = a[0] * b[ 0] + a[4] * b[ 1] + a[ 8] * b[ 2] + a[12] * b[ 3];
+        a[ 1] = a[1] * b[ 0] + a[5] * b[ 1] + a[ 9] * b[ 2] + a[13] * b[ 3];
+        a[ 2] = a[2] * b[ 0] + a[6] * b[ 1] + a[10] * b[ 2] + a[14] * b[ 3];
+        a[ 3] = a[3] * b[ 0] + a[7] * b[ 1] + a[11] * b[ 2] + a[15] * b[ 3];
+        
+        a[ 4] = a[0] * b[ 4] + a[4] * b[ 5] + a[ 8] * b[ 6] + a[12] * b[ 7];
+        a[ 5] = a[1] * b[ 4] + a[5] * b[ 5] + a[ 9] * b[ 6] + a[13] * b[ 7];
+        a[ 6] = a[2] * b[ 4] + a[6] * b[ 5] + a[10] * b[ 6] + a[14] * b[ 7];
+        a[ 7] = a[3] * b[ 4] + a[7] * b[ 5] + a[11] * b[ 6] + a[15] * b[ 7];
+        
+        a[ 8] = a[0] * b[ 8] + a[4] * b[ 9] + a[ 8] * b[10] + a[12] * b[11];
+        a[ 8] = a[1] * b[ 8] + a[5] * b[ 9] + a[ 9] * b[10] + a[13] * b[11];
+        a[10] = a[2] * b[ 8] + a[6] * b[ 9] + a[10] * b[10] + a[14] * b[11];
+        a[11] = a[3] * b[ 8] + a[7] * b[ 9] + a[11] * b[10] + a[15] * b[11];
+        
+        a[12] = a[0] * b[12] + a[4] * b[13] + a[ 8] * b[14] + a[12] * b[15];
+        a[12] = a[1] * b[12] + a[5] * b[13] + a[ 9] * b[14] + a[13] * b[15];
+        a[14] = a[2] * b[12] + a[6] * b[13] + a[10] * b[14] + a[14] * b[15];
+        a[15] = a[3] * b[12] + a[7] * b[13] + a[11] * b[14] + a[15] * b[15];
+        
+        return new Matrix4(a);
+    }
+    
     translate(vector)
     {
-        let points = this._points;
-        let { x, y, z } = vector;
-        
-        points[12] = points[0] * x + points[4] * y + points[8]  * z + points[12];
-        points[13] = points[1] * x + points[5] * y + points[9]  * z + points[13];
-        points[14] = points[2] * x + points[6] * y + points[10] * z + points[14];
-        points[15] = points[3] * x + points[7] * y + points[11] * z + points[15];
-        
-        return new Matrix4(points);
+        return this.multiply(Matrix4.translation(vector));
     }
     
     scale(vector)
     {
-        let points = this._points;
-        let {x, y, z} = vector;
-        
-        points[0] *= x;
-        points[1] *= x;
-        points[2] *= x;
-        points[3] *= x;
-        
-        points[4] *= y;
-        points[5] *= y;
-        points[6] *= y;
-        points[7] *= y;
-        
-        points[8]  *= z;
-        points[9]  *= z;
-        points[10] *= z;
-        points[11] *= z;
-        
-        return new Matrix4(points);
+        return this.multiply(Matrix4.scaling(vector));
     }
     
     get points()
@@ -338,6 +413,104 @@ class Matrix4
             0,                 2 / (t - b),       0,                 0,
             0,                 0,                 2 / (n - f),       0,
             (l + r) / (l - r), (b + t) / (b - t), (n + f) / (n - f), 1,
+        ]);
+    }
+    
+    static translation(vector)
+    {
+        let { x, y, z } = vector;
+        
+        return new Matrix4([
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            x, y, z, 1,
+        ]);
+    }
+    
+    static scaling(vector)
+    {
+        let { x, y, z } = vector;
+        
+        return new Matrix4([
+            x, 0, 0, 0,
+            0, y, 0, 0,
+            0, 0, z, 0,
+            0, 0, 0, 1,
+        ]);
+    }
+}
+
+class Matrix3
+{
+    constructor(points = null)
+    {
+        this._points = new Float32Array(points || 9);
+    }
+    
+    multiply(matrix)
+    {
+        let a = this._points;
+        let b = matrix._points;
+        
+        a[0] = a[0] * b[0] + a[3] * b[1] + a[6] * b[2];
+        a[1] = a[1] * b[0] + a[4] * b[1] + a[7] * b[2];
+        a[2] = a[2] * b[0] + a[5] * b[1] + a[8] * b[2];
+        
+        a[3] = a[0] * b[3] + a[3] * b[4] + a[6] * b[5];
+        a[4] = a[1] * b[3] + a[4] * b[4] + a[7] * b[5];
+        a[5] = a[2] * b[3] + a[5] * b[4] + a[8] * b[5];
+        
+        a[6] = a[0] * b[6] + a[3] * b[7] + a[6] * b[8];
+        a[7] = a[1] * b[6] + a[4] * b[7] + a[7] * b[8];
+        a[8] = a[2] * b[6] + a[5] * b[7] + a[8] * b[8];
+        
+        return new Matrix3(a);
+    }
+    
+    translate(vector)
+    {
+        return this.multiply(Matrix3.translation(vector));
+    }
+    
+    scale(vector)
+    {
+         return this.multiply(Matrix3.scaling(vector));
+    }
+    
+    get points()
+    {
+         return this._points;
+    }
+    
+    static projection(w, h)
+    {
+        return new Matrix3([
+            2 / w, 0,      0,
+            0,     -2 / h, 0,
+            -1,    1,      1,
+        ]);
+    }
+    
+    static translation(vector)
+    {
+        let { x, y } = vector;
+        
+        return new Matrix3([
+            1, 0, 0,
+            0, 1, 0,
+            x, y, 1,
+        ]);
+    }
+    
+    static scaling(vector)
+    {
+        let { x, y } = vector;
+        
+        return new Matrix4([
+            x, 0, 0,
+            0, y, 0,
+            0, 0, 1,
         ]);
     }
 }
@@ -394,13 +567,14 @@ class Shader
             attribute vec4 a_position;
             attribute vec2 a_texcoord;
             
-            uniform mat4 u_matrix;
+            uniform mat4 u_posMatrix;
+            uniform mat4 u_texMatrix;
             
             varying vec2 v_texcoord;
             
             void main() {
-                gl_Position = u_matrix * a_position;
-                v_texcoord = a_texcoord;
+                gl_Position = u_posMatrix * a_position;
+                v_texcoord = (u_texMatrix * vec4(a_texcoord, 0, 1)).xy;
             }
         `;
     }
@@ -441,7 +615,8 @@ class ShaderProgram
                     texture: this.getAttribLocation('a_texcoord'),
                 },
                 uniform: {
-                    matrix: this.getUniformLocation('u_matrix'),
+                    posMatrix: this.getUniformLocation('u_posMatrix'),
+                    texMatrix: this.getUniformLocation('u_texMatrix'),
                     texture: this.getUniformLocation('u_texture'),
                 },
             },
@@ -567,9 +742,19 @@ class RenderElement
         return this._position;
     }
     
+    set position(position)
+    {
+        this._position = position;
+    }
+    
     get size()
     {
         return this._size;
+    }
+    
+    set size(size)
+    {
+        this._size = size;
     }
     
     get info()
@@ -645,11 +830,19 @@ class Texture extends RenderElement
         this._positionBuffer.activate();
         this._textureBuffer.activate();
         
-        let matrix = Matrix4.orthographic(0, this._renderer.width, this._renderer.height, 0, -1, 1)
-            .translate(new Vector3(this.info.x, this.info.y, 0))
-            .scale(new Vector3(this.info.width, this.info.height, 0));
+        let projection = Matrix4.orthographic(0, this._renderer.width, this._renderer.height, 0, -1, 1);
+        let scale = Matrix4.scaling(new Vector3(this.info.width, this.info.height, 1));
+        let translation = Matrix4.translation(new Vector3(this.info.x, this.info.y, 0));
         
-        this.gl.uniformMatrix4fv(program.locations.uniform.matrix, false, matrix.points);
+        let posMatrix = translation.multiply(scale).multiply(projection);
+        
+        this.gl.uniformMatrix4fv(program.locations.uniform.posMatrix, false, posMatrix.points);
+        
+        let texMatrix = Matrix4
+            .translation(new Vector3(this.info.x / 600, this.info.y / 300, 0))
+            .scale(new Vector3(this.info.width / 500, this.info.height / 500, 0));
+        
+        this.gl.uniformMatrix4fv(program.locations.uniform.texMatrix, false, texMatrix.points);
         this.gl.uniform1i(program.locations.uniform.texture, 0);
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
     }
@@ -671,7 +864,30 @@ class Sprite extends Texture
     
     load()
     {
-        return super.load().then(img => console.log(img));
+        return super.load().then(img => {
+            // this.position = new Vector2(10, 10);
+            // this.size = this.size.multiply(3);
+        });
+    }
+}
+
+class Background extends Texture
+{
+    constructor(renderer, url)
+    {
+        super(renderer, url);
+    }
+    
+    // load()
+    // {
+    //     return super.load().then(img => {});
+    // }
+    
+    render()
+    {
+        this.size = new Vector2(this._renderer.width, this._renderer.height);
+        
+        return super.render();
     }
 }
 
@@ -791,8 +1007,21 @@ class Scene
     constructor()
     {
         this.renderer = new Renderer();
-        this.renderer.add(new Sprite(this.renderer, 'img/digimon/armagemon.png'));
-        // this.renderer.add(new Sprite(this.renderer, 'img/digimon/maps/forrest.png'));
+        
+        let forrest = new Texture(this.renderer, 'img/digimon/maps/forrest.png');
+        forrest.position = new Vector2(800, 0);
+        
+        setTimeout(() => {
+            let size = forrest.size;
+            ease(f => {
+                forrest.position = new Vector2(800 + 200 * f, 100 * f);
+                forrest.size = size.multiply(1 + f);
+            }, { duration: 1000 });
+        }, 1000);
+    
+        this.renderer.add(new Background(this.renderer, 'img/digimon/scenes/backgrounds/accessglacier.png'));
+        this.renderer.add(forrest);
+        this.renderer.add(new Sprite(this.renderer, 'img/digimon/giga/miragegaogamon_burst_mode.png'));
         this.renderer.play();
     }
 }
