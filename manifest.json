@@ -1,0 +1,21 @@
+{
+	"short_name": "Digimon Tribute",
+	"name": "Tribute to Digimon Dawn/Dusk",
+	"icons": [
+		{
+			"src": "/img/logo-96.png",
+			"type": "image/png",
+			"sizes": "96x96"
+		},
+		{
+			"src": "/img/logo-192.png",
+			"type": "image/png",
+			"sizes": "192x192"
+		}
+	],
+	"start_url": ".",
+	"display": "standalone",
+	"theme_color": "#333",
+	"background_color": "#333",
+	"orientation": "landscape"
+}

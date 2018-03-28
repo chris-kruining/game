@@ -8,7 +8,7 @@ const volumes = {
     effects: 1,
 };
 
-navigator.serviceWorker.register('/worker.js')
+navigator.serviceWorker.register('/digimon/game/worker.js')
     .then(r => console.log(e), e => console.error(e));
 
 function ease(callback, options = {})
