@@ -1,7 +1,9 @@
 'use strict';
 
 import Renderer from './graphics/renderer.js';
+import RenderElement from './graphics/renderElement.js';
 import Resources from './network/resources.js';
+import Config from './config.js';
 
 export default class Scene {
     constructor(options, setup, loop)
@@ -11,6 +13,8 @@ export default class Scene {
         this.loopInterval = null;
         this.setupCallback = setup;
         this.loopCallback = loop;
+
+        new Config('tickSpeed', 50);
 
         this._owner = null;
         this.variables = {};
@@ -47,9 +51,14 @@ export default class Scene {
 
     play()
     {
+        if(this.state === Scene.playing)
+        {
+            return;
+        }
+
         this.state = Scene.playing;
 
-        this.loopInterval = setInterval(() => this.loop(), tickSpeed);
+        this.loopInterval = setInterval(() => this.loop(), Config.tickSpeed);
         this.renderer.play();
     }
 
