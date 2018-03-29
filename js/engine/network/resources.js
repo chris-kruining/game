@@ -6,25 +6,25 @@ class Resources
     {
        this.registration = {};
     }
-    
+
     preload(key)
     {
         this.load(key);
     }
-    
+
     load(key)
     {
         return fetch(localInstance.registration[key].url, {
             credentials: 'same-origin'
         })
-            .then(r => r.arrayBuffer())
-            .then(t => {
-                localInstance.registration[key].value = t;
-                
-                return t;
+            .then(r => r.blob())
+            .then(r => {
+                localInstance.registration[key].value = window.URL.createObjectURL(r);
+
+                return r;
             });
     }
-    
+
     *[Symbol.iterator]()
     {
         yield * Object.keys(localInstance.registration);
@@ -46,7 +46,7 @@ const resources = new Proxy(Resources, {
 
         throw new Error(`${key} is not a registered resource`);
     },
-    
+
     set: (c, key, val) =>
     {
         if(key in resources)
@@ -59,37 +59,42 @@ const resources = new Proxy(Resources, {
             value: null,
         };
         localInstance.preload(key);
-        
+
         return true;
     },
-    
+
     deleteProperty: (c, key) =>
     {
         if(key in resources)
         {
             delete localInstance.registration[key];
-            
+
             return true;
         }
-    
+
         throw new Error(`${key} is not a registered resource`);
     },
-    
+
     construct: (c, [key, conf]) =>
     {
+        if(typeof conf === 'string')
+        {
+            conf = { url: conf };
+        }
+
         localInstance.registration[key] = Object.assign({
             url: '',
             value: null,
         }, conf);
-        
+
         return localInstance.load(key);
     },
-    
+
     has: (c, key) =>
     {
         return localInstance.registration.hasOwnProperty(key);
     },
-        
+
     apply: (c, t, args) =>
     {
         return localInstance.load(args[0] || '');
