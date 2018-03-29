@@ -4,9 +4,9 @@ import Texture from './texture.js';
 
 export default class Sprite extends Texture
 {
-    constructor(renderer, url)
+    constructor(renderer, key)
     {
-        super(renderer, url);
+        super(renderer, key);
     }
 
     load()

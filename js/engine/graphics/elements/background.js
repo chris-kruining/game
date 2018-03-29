@@ -5,9 +5,9 @@ import Vector2 from '../../../math/vector2.js';
 
 export default class Background extends Texture
 {
-    constructor(renderer, url)
+    constructor(renderer, key)
     {
-        super(renderer, url);
+        super(renderer, key);
     }
 
     // load()

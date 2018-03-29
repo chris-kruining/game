@@ -5,17 +5,18 @@ import Buffer from '../buffer.js';
 import Vector2 from '../../../math/vector2.js';
 import Vector3 from '../../../math/vector3.js';
 import Matrix4 from '../../../math/matrix4.js';
+import Resources from '../../network/resources.js';
 
 export default class Texture extends RenderElement
 {
-    constructor(renderer, url)
+    constructor(renderer, key)
     {
         super(renderer, new Vector2(0, 0), new Vector2(1, 1));
 
         this._srcPosition = new Vector2(10, 10);
         this._srcSize = new Vector2(100, -100);
         this._texture = this.gl.createTexture();
-        this._url = url;
+        this._url = Resources[key];
         this._textureBuffer = new Buffer(renderer, 'texture');
         this._textureBuffer.data = [
             0, 0,
