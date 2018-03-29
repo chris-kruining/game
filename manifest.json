@@ -18,7 +18,7 @@
 			"sizes": "512x512"
 		}
 	],
-	"start_url": "?from-manifest=true",
+	"start_url": ".",
 	"display": "standalone",
 	"theme_color": "#333",
 	"background_color": "#333",
