@@ -17,7 +17,7 @@ let scene1 = new Scene({
         music: 'audio/digimon/dawn/battle_02.mp3',
     },
 }, scene => {
-    let forrest = new Texture(this.renderer, 'forrest');
+    let forrest = new Texture(scene.renderer, 'forrest');
     forrest.position = new Vector2(0, 0);
 
     setTimeout(() =>
@@ -29,12 +29,11 @@ let scene1 = new Scene({
         }, {duration: 1000});
     }, 1000);
 
-    scene.add(new Background(this.renderer, 'background'));
+    scene.add(new Background(scene.renderer, 'background'));
     scene.add(forrest);
-    scene.add(new Sprite(this.renderer, 'monster'));
+    scene.add(new Sprite(scene.renderer, 'monster'));
 }, scene => {});
 
 game.addScene(scene1).then(scene => {
-    scene.play();
     game.selectScene(scene);
 });
