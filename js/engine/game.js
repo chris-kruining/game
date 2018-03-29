@@ -7,11 +7,39 @@ export default class Game
 {
     constructor()
     {
+        this.scenes = [];
+        this.currentScene = null;
+
         navigator.serviceWorker.register('./worker.js')
             .then(r => console.log(e), e => console.error(e));
-        
-        console.log(...Resources);
-        
-        new Scene();
+    }
+
+    addScene(scene)
+    {
+        this.scenes.push(scene);
+        scene._owner = this;
+
+        return scene.setup();
+    }
+
+    selectScene(scene)
+    {
+        if(!(scene instanceof Scene))
+        {
+            if(id < 0 || id >= this.scenes.length)
+            {
+                throw new TypeError('Out of bound');
+            }
+
+            scene = this.scenes[id];
+        }
+
+        if(this.currentScene !== null)
+        {
+            this.currentScene.stop();
+        }
+
+        this.currentScene = scene;
+        this.currentScene.play();
     }
 }
