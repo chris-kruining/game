@@ -3,6 +3,11 @@
 	"name": "Tribute to Digimon Dawn/Dusk",
 	"icons": [
 		{
+			"src": "img/logo-48.png",
+			"type": "image/png",
+			"sizes": "48x48"
+		},
+		{
 			"src": "img/logo-96.png",
 			"type": "image/png",
 			"sizes": "96x96"
