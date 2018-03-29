@@ -19,7 +19,7 @@
 		}
 	],
 	"start_url": ".",
-	"display": "standalone",
+	"display": "fullscreen",
 	"theme_color": "#333",
 	"background_color": "#333",
 	"orientation": "landscape"
