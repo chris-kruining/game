@@ -10,8 +10,8 @@ export default class Game
         this.scenes = [];
         this.currentScene = null;
 
-        navigator.serviceWorker.register('./worker.js')
-            .then(r => console.log(r), e => console.error(e));
+        // navigator.serviceWorker.register('./worker.js')
+        //     .then(r => console.log(r), e => console.error(e));
     }
 
     addScene(scene)
