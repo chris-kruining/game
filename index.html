@@ -8,16 +8,62 @@
         <style>
             body
             {
+                display: grid;
+                grid-gap: 1em;
+                background-color: #eee;
+                color: #333;
                 margin: 0;
+                justify-items: start;
+            }
+            
+            h1 {
+                margin: 0;
+                padding: .5em;
+                background-color: #333;
+                color: #eee;
+                justify-self: stretch;
+            }
+            
+            p, h3 {
+                margin: 0;
+                padding: 0 .5em;
+            }
+            
+            p {
+                padding-bottom: 1em;
+            }
+            
+            button {
+                margin: 0 .5em;
+                padding: .5em 1.5em;
+                background-color: #333;
+                color: #eee;
+                border-radius: .5em;
             }
         </style>
-
+    
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Digimon Tribute">
+        <meta name="theme-color" content="#333">
+    
         <link rel="manifest" href="manifest.json">
     </head>
 
     <body>
-        <!--<script src="game.js" async defer></script>-->
-        <!--<script src="webgl.js" async defer></script>-->
+        <h1>Digimon Tribute</h1>
+        
+        <h3>Description</h3>
+        
+        <p>This is a personal project to teach myself modern javascript-api's like: IndexedDB, ServiceWorker, WebGl, etc.</p>
+
+        <h3>Disclaimer</h3>
+
+        <p>I do <b>NOT</b> own any of the assets shown and/or heard</p>
+        
+        <button start>Start</button>
+        
         <script type="module" src="js/main.js"></script>
     </body>
 </html>

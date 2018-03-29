@@ -12,6 +12,7 @@ export default class Renderer
         this.canvas.height = document.documentElement.clientHeight;
         this.canvas.style.position = 'fixed';
         this.canvas.style.top = 0;
+        this.canvas.style.zIndex = 100;
 
         document.body.appendChild(this.canvas);
 
@@ -57,6 +58,7 @@ export default class Renderer
 
     clear()
     {
+        this.context.clearColor(0.0, 0.0, 0.0, 1.0);
         this.context.clear(this.context.COLOR_BUFFER_BIT | this.context.DEPTH_BUFFER_BIT);
     }
 
@@ -79,7 +81,7 @@ export default class Renderer
         {
             throw new Error('Renderer.add expected an RenderElement, got something else');
         }
-        
+
         this._stack.push(element);
     }
 
