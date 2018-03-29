@@ -37,7 +37,7 @@ const resources = new Proxy(Resources, {
     {
         if(key in resources)
         {
-            return localInstance.registration[key].value;
+            return localInstance.registration[key].url;
         }
         else if(localInstance.__proto__.hasOwnProperty(key))
         {
