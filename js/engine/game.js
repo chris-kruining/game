@@ -11,7 +11,7 @@ export default class Game
         this.currentScene = null;
 
         navigator.serviceWorker.register('./worker.js')
-            .then(r => console.log(e), e => console.error(e));
+            .then(r => console.log(r), e => console.error(e));
     }
 
     addScene(scene)
