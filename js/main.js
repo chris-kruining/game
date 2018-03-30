@@ -8,7 +8,8 @@ import Sprite from './engine/graphics/elements/sprite.js';
 import Vector2 from './math/vector2.js';
 import Animation from './engine/graphics/animation.js';
 
-document.querySelector('button[start]').addEventListener('click', () => {
+function main()
+{
     let game = new Game();
     let scene1 = new Scene({
         resources: {
@@ -37,4 +38,11 @@ document.querySelector('button[start]').addEventListener('click', () => {
 
     game.addScene(scene1)
         .then(scene => { game.selectScene(scene); })
-});
+}
+
+document.querySelector('button[start]').addEventListener('click', main);
+
+if(window.location.search.includes('direct-start'))
+{
+    main();
+}

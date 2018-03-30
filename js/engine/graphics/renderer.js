@@ -20,6 +20,7 @@ export default class Renderer
         this._playState = Renderer.stopped;
 
         this.context = this.canvas.getContext('webgl');
+        this.context.clearColor(0.0, 0.0, 0.0, 1.0);
 
         this._program = new ShaderProgram(this.context);
     }
@@ -58,7 +59,6 @@ export default class Renderer
 
     clear()
     {
-        this.context.clearColor(0.0, 0.0, 0.0, 1.0);
         this.context.clear(this.context.COLOR_BUFFER_BIT | this.context.DEPTH_BUFFER_BIT);
     }
 

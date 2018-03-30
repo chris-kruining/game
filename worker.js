@@ -25,7 +25,7 @@ self.addEventListener('fetch', e => {
     e.respondWith(
         self.clients.matchAll({includeUncontrolled: true})
             .then(c => c[0].url.split('?').pop())
-            .then(q => q.split('&').map(p => p.split('=')).some(p => p[0] === 'no-cache'))
+            .then(q => q.includes('no-cache'))
             .then(r => {
                 if(r === true)
                 {
