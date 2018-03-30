@@ -22,13 +22,27 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-    e.respondWith(caches.open('game-cache-dynamic').then(c => c.match(e.request).then(r => {
-        return r || fetch(e.request).then(r => {
-            c.put(e.request, r.clone());
+    e.respondWith(
+        self.clients.matchAll({includeUncontrolled: true})
+            .then(c => c[0].url.split('?').pop())
+            .then(q => q.split('&').map(p => p.split('=')).some(p => p[0] === 'no-cache'))
+            .then(r => {
+                if(r === true)
+                {
+                    return fetch(e.request);
+                }
+                else
+                {
+                    return caches.open('game-cache-dynamic').then(c => c.match(e.request).then(r => {
+                        return r || fetch(e.request).then(r => {
+                            c.put(e.request, r.clone());
 
-            return r;
-        });
-    })));
+                            return r;
+                        });
+                    }));
+                }
+            })
+    );
 });
 
 self.addEventListener('push', e => {
