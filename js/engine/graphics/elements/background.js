@@ -10,10 +10,12 @@ export default class Background extends Texture
         super(renderer, key);
     }
 
-    // load()
-    // {
-    //     return super.load().then(img => {});
-    // }
+    load()
+    {
+        return super.load().then(img => {
+            this._srcSize = new Vector2(img.width, img.height);
+        });
+    }
 
     render()
     {

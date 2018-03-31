@@ -1,6 +1,7 @@
 'use strict';
 
 import Texture from './texture.js';
+import Vector2 from '../../../math/vector2.js';
 
 export default class Sprite extends Texture
 {
@@ -12,8 +13,9 @@ export default class Sprite extends Texture
     load()
     {
         return super.load().then(img => {
-            // this.position = new Vector2(10, 10);
-            // this.size = this.size.multiply(3);
+            this._srcPosition = new Vector2(10, 11);
+            this._srcSize = new Vector2(165, 161);
+            this.size = this._srcSize.multiply(3);
         });
     }
 }

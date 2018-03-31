@@ -13,26 +13,26 @@ function main()
     let game = new Game();
     let scene1 = new Scene({
         resources: {
-            forrest: 'img/digimon/maps/forrest.png',
+            // forrest: 'img/digimon/maps/forrest.png',
             background: 'img/digimon/scenes/backgrounds/accessglacier.png',
             monster: 'img/digimon/giga/miragegaogamon_burst_mode.png',
             music: 'audio/digimon/dawn/battle_02.mp3',
         },
     }, scene => {
-        let forrest = new Texture(scene.renderer, 'forrest');
-        forrest.position = new Vector2(0, 0);
-
-        setTimeout(() =>
-        {
-            // let size = forrest.size;
-            Animation.ease(f => {
-                // forrest.position = new Vector2(800 + 200 * f, 100 * f);
-                // forrest.size = size.multiply(1 + f);
-            }, {duration: 1000});
-        }, 1000);
+        // let forrest = new Texture(scene.renderer, 'forrest');
+        // forrest.position = new Vector2(0, 0);
+        //
+        // setTimeout(() =>
+        // {
+        //     // let size = forrest.size;
+        //     Animation.ease(f => {
+        //         // forrest.position = new Vector2(800 + 200 * f, 100 * f);
+        //         // forrest.size = size.multiply(1 + f);
+        //     }, {duration: 1000});
+        // }, 1000);
 
         scene.add(new Background(scene.renderer, 'background'));
-        scene.add(forrest);
+        // scene.add(forrest);
         scene.add(new Sprite(scene.renderer, 'monster'));
     }, scene => {});
 

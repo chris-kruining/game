@@ -13,18 +13,15 @@ export default class Texture extends RenderElement
     {
         super(renderer, new Vector2(0, 0), new Vector2(1, 1));
 
-        this._srcPosition = new Vector2(10, 10);
-        this._srcSize = new Vector2(100, -100);
+        this._srcPosition = new Vector2(0, 0);
+        this._srcSize = new Vector2(1, 1);
+        this._imageSize = new Vector2(1, 1);
         this._texture = this.gl.createTexture();
         this._url = Resources[key];
         this._textureBuffer = new Buffer(renderer, 'texture');
         this._textureBuffer.data = [
-            0, 0,
-            0, 1,
-            1, 0,
-            1, 0,
-            0, 1,
-            1, 1,
+            0, 0,   0, 1,   1, 0,
+            1, 0,   0, 1,   1, 1,
         ];
 
         this.bind();
@@ -46,8 +43,7 @@ export default class Texture extends RenderElement
             img.src = this._url;
         })
             .then(img => {
-                this._size = new Vector2(img.width, img.height);
-                this._srcSize = new Vector2(img.width, img.height);
+                this._imageSize = new Vector2(img.width, img.height);
 
                 this.bind();
                 this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, img);
@@ -64,39 +60,26 @@ export default class Texture extends RenderElement
 
     render()
     {
-        let program = this._renderer.program.info;
-        let { source, target } = this.info;
+        let { program, locations: { uniform } } = this._renderer.program.info;
+        let { source, target, image } = this.info;
 
         this.gl.bindTexture(this.gl.TEXTURE_2D, this._texture);
-        this.gl.useProgram(program.program);
+        this.gl.useProgram(program);
 
         this._positionBuffer.activate();
         this._textureBuffer.activate();
 
         let posMatrix = Matrix4.orthographic(0, this._renderer.width, this._renderer.height, 0, -1, 1)
             .translate(new Vector3(target.x, target.y, 0))
-            .scale(new Vector3(target.x, target.y, 1));
+            .scale(new Vector3(target.width, target.height, 1));
 
-        this.gl.uniformMatrix4fv(program.locations.uniform.posMatrix, false, posMatrix.points);
+        this.gl.uniformMatrix4fv(uniform.posMatrix, false, posMatrix.points);
 
-        let texMatrix = Matrix4.translation(new Vector3(source.x / target.width, source.y / target.height, 0))
-            .scale(new Vector3(source.width / target.width, source.height / target.height, 1));
+        let texMatrix = Matrix4.translation(new Vector3(source.x / image.width, source.y / image.height, 0))
+            .scale(new Vector3(source.width / image.width, source.height / image.height, 1));
 
-        // texMatrix.print();
-
-        // 0.08774691075086594 0 0 0
-        // -0 -0.16758786141872406 -0 -0
-        // 0 0 1 0
-        // 0.4825766682624817 0.44382011890411377 0 1
-
-        // 0.49999943375587463 0 0 0
-        // 0 0.49999943375587463 0 0
-        // 0 0 1 0
-        // 0.049999941140413284 0.049999941140413284 0 1
-
-
-        this.gl.uniformMatrix4fv(program.locations.uniform.texMatrix, false, texMatrix.points);
-        this.gl.uniform1i(program.locations.uniform.texture, 0);
+        this.gl.uniformMatrix4fv(uniform.texMatrix, false, texMatrix.points);
+        this.gl.uniform1i(uniform.texture, 0);
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
     }
 
@@ -104,6 +87,10 @@ export default class Texture extends RenderElement
     {
         return {
             target: super.info,
+            image: {
+                width: this._imageSize.x,
+                height: this._imageSize.y,
+            },
             source: {
                 x: this._srcPosition.x,
                 y: this._srcPosition.y,

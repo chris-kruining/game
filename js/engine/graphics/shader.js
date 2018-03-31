@@ -60,6 +60,7 @@ export default class Shader
             void main() {
                 gl_Position = u_posMatrix * a_position;
                 v_texcoord = (u_texMatrix * vec4(a_texcoord, 0, 1)).xy;
+                //v_texcoord = a_texcoord;
             }
         `;
     }

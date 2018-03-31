@@ -2,6 +2,8 @@
 
 import ShaderProgram from './shaderProgram.js';
 import RenderElement from './renderElement.js';
+import Matrix4 from '../../math/matrix4.js';
+import Vector3 from '../../math/vector3.js';
 
 export default class Renderer
 {
@@ -20,7 +22,7 @@ export default class Renderer
         this._playState = Renderer.stopped;
 
         this.context = this.canvas.getContext('webgl');
-        this.context.clearColor(0.0, 0.0, 0.0, 1.0);
+        this.context.clearColor(1.0, 0.0, 1.0, .5);
 
         this._program = new ShaderProgram(this.context);
     }
@@ -59,7 +61,7 @@ export default class Renderer
 
     clear()
     {
-        this.context.clear(this.context.COLOR_BUFFER_BIT | this.context.DEPTH_BUFFER_BIT);
+        this.context.clear(this.context.COLOR_BUFFER_BIT);
     }
 
     resize()

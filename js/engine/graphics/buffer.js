@@ -24,6 +24,11 @@ export default class Buffer
         this.gl.enableVertexAttribArray(attributes[this._key]);
         this.gl.vertexAttribPointer(attributes[this._key], 2, this.gl.FLOAT, false, 0, 0);
     }
+    
+    get buffer()
+    {
+        return this._buffer;
+    }
 
     set data(data)
     {

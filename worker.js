@@ -22,38 +22,29 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-    e.respondWith(
-        self.clients.matchAll({includeUncontrolled: true})
-            .then(c => c[0].url.split('?').pop())
-            .then(q => q.includes('no-cache'))
-            .then(r => {
-                if(r === true)
-                {
-                    return fetch(e.request);
-                }
-                else
-                {
-                    return caches.open('game-cache-dynamic').then(c => c.match(e.request).then(r => {
-                        return r || fetch(e.request).then(r => {
-                            c.put(e.request, r.clone());
-
-                            return r;
-                        });
-                    }));
-                }
-            })
-    );
+    e.respondWith(caches.open('game-cache-dynamic').then(c => c.match(e.request).then(r =>
+    {
+        let f = fetch(e.request).then(r => {
+            c.put(e.request, r.clone());
+        
+            return r;
+        });
+    
+        return r || f;
+    })));
 });
 
 self.addEventListener('push', e => {
     if (e.data.text() == 'update-available')
     {
-        // event.waitUntil(caches.keys().then(
-        //     names => Promise.all(names
-        //         .filter(name => ['game-cache-static', 'game-cache-dynamic'].includes(name))
-        //         .map(name => caches.delete(name))
-        //     )
-        // ).then());
+        e.waitUntil(caches.keys().then(
+            names => Promise.all(names
+                .filter(name => ['game-cache-static', 'game-cache-dynamic'].includes(name))
+                .map(name => caches.delete(name))
+            )
+        ).then());
+        
+        return;
         let p;
 
         console.log(self.Notification);
