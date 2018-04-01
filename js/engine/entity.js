@@ -1,8 +1,9 @@
 'use strict';
 
-export default class Music
+export default class Entity
 {
     constructor()
     {
+    
     }
 }

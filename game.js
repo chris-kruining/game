@@ -1,6 +1,6 @@
 'use strict';
 
-const renderMode = 'blended'; //'default|blended';
+const renderMode = 'default'; //'default|blended';
 const tickSpeed = 100;
 const volumes = {
     master: 0,

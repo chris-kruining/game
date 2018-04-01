@@ -5,29 +5,42 @@ import RenderElement from './graphics/renderElement.js';
 import Resources from './network/resources.js';
 import Config from './config.js';
 
-export default class Scene {
-    constructor(options, setup, loop)
+export default class Scene
+{
+    constructor(game)
     {
+        if(!this.__proto__.hasOwnProperty('setup'))
+        {
+            throw new Error(this.__proto__.constructor.name + ' does not have a method `setup`');
+        }
+        
+        if(!this.__proto__.hasOwnProperty('loop'))
+        {
+            throw new Error(this.__proto__.constructor.name + ' does not have a method `loop`');
+        }
+        
+        if(!this.__proto__.constructor.hasOwnProperty('config'))
+        {
+            throw new Error(this.__proto__.constructor.name + ' does not have a getter `config`');
+        }
+        
         this.state = Scene.stopped;
         this.renderer = new Renderer();
         this.loopInterval = null;
-        this.setupCallback = setup;
-        this.loopCallback = loop;
-
         new Config('tickSpeed', 50);
 
-        this._owner = null;
+        this._owner = game;
         this.variables = {};
         this.options = Object.assign({
             resources: {},
-        }, options);
+        }, this.__proto__.constructor.config);
     }
 
-    setup()
+    install()
     {
         return Promise.all(Object.entries(this.options.resources).map(([k, v]) => new Resources(k, v)))
             .then(() => {
-                this.setupCallback(this, this._owner);
+                this.setup(this._owner);
 
                 return this;
             });
@@ -35,17 +48,16 @@ export default class Scene {
 
     add(element)
     {
-        if(element instanceof RenderElement)
-        {
-            this.renderer.add(element);
-        }
+        this.renderer.add(element);
+        
+        return element.load().then(() => element);
     }
 
-    loop()
+    interval()
     {
         if(this.state === Scene.playing)
         {
-            this.loopCallback(this, this._owner);
+            this.loop(this._owner);
         }
     }
 
@@ -58,7 +70,7 @@ export default class Scene {
 
         this.state = Scene.playing;
 
-        this.loopInterval = setInterval(() => this.loop(), Config.tickSpeed);
+        this.loopInterval = setInterval(() => this.interval(), Config.tickSpeed);
         this.renderer.play();
     }
 
@@ -82,6 +94,11 @@ export default class Scene {
         }
 
         this._owner = owner;
+    }
+
+    get owner()
+    {
+        return this._owner;
     }
 
     static get playing()

@@ -17,10 +17,10 @@ export default class Background extends Texture
         });
     }
 
-    render()
+    render(i)
     {
         this.size = new Vector2(this._renderer.width, this._renderer.height);
 
-        return super.render();
+        return super.render(i);
     }
 }

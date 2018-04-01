@@ -1,46 +1,31 @@
 'use strict';
 
 import Game from './engine/game.js';
-import Scene from './engine/scene.js';
-import Texture from './engine/graphics/elements/texture.js';
-import Background from './engine/graphics/elements/background.js';
-import Sprite from './engine/graphics/elements/sprite.js';
-import Vector2 from './math/vector2.js';
-import Animation from './engine/graphics/animation.js';
+import Battle from './app/scenes/battle.js';
+import Exploring from './app/scenes/exploring.js';
+
+let game = new Game();
+let scenes = [
+    Battle,
+    Exploring,
+];
 
 function main()
 {
-    let game = new Game();
-    let scene1 = new Scene({
-        resources: {
-            // forrest: 'img/digimon/maps/forrest.png',
-            background: 'img/digimon/scenes/backgrounds/accessglacier.png',
-            monster: 'img/digimon/giga/miragegaogamon_burst_mode.png',
-            music: 'audio/digimon/dawn/battle_02.mp3',
-        },
-    }, scene => {
-        // let forrest = new Texture(scene.renderer, 'forrest');
-        // forrest.position = new Vector2(0, 0);
-        //
-        // setTimeout(() =>
-        // {
-        //     // let size = forrest.size;
-        //     Animation.ease(f => {
-        //         // forrest.position = new Vector2(800 + 200 * f, 100 * f);
-        //         // forrest.size = size.multiply(1 + f);
-        //     }, {duration: 1000});
-        // }, 1000);
-
-        scene.add(new Background(scene.renderer, 'background'));
-        // scene.add(forrest);
-        scene.add(new Sprite(scene.renderer, 'monster'));
-    }, scene => {});
-
-    game.addScene(scene1)
-        .then(scene => { game.selectScene(scene); })
+    Promise.all(scenes.map(scene => game.addScene(scene))).then(loadedScenes => {
+        scenes = loadedScenes;
+    
+        game.selectScene(scenes[0]);
+    });
 }
 
 document.querySelector('button[start]').addEventListener('click', main);
+document.addEventListener('keydown', e => {
+    if(e.keyCode >= 49 && e.keyCode <= 57)
+    {
+        game.selectScene(scenes[e.keyCode - 49]);
+    }
+});
 
 if(window.location.search.includes('direct-start'))
 {

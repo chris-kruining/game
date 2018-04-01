@@ -4,6 +4,7 @@ import RenderElement from '../renderElement.js';
 import Buffer from '../buffer.js';
 import Vector2 from '../../../math/vector2.js';
 import Vector3 from '../../../math/vector3.js';
+import Vector4 from '../../../math/vector4.js';
 import Matrix4 from '../../../math/matrix4.js';
 import Resources from '../../network/resources.js';
 
@@ -18,6 +19,9 @@ export default class Texture extends RenderElement
         this._imageSize = new Vector2(1, 1);
         this._texture = this.gl.createTexture();
         this._url = Resources[key];
+        this.alpha = 1;
+        this.filter = new Vector4(1, 1, 1, 1);
+        this.filterMask = new Vector4(0, 0, 0, 0);
         this._textureBuffer = new Buffer(renderer, 'texture');
         this._textureBuffer.data = [
             0, 0,   0, 1,   1, 0,
@@ -30,8 +34,6 @@ export default class Texture extends RenderElement
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
         this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
-
-        this.load();
     }
 
     load()
@@ -79,7 +81,12 @@ export default class Texture extends RenderElement
             .scale(new Vector3(source.width / image.width, source.height / image.height, 1));
 
         this.gl.uniformMatrix4fv(uniform.texMatrix, false, texMatrix.points);
+        
         this.gl.uniform1i(uniform.texture, 0);
+        this.gl.uniform1f(uniform.alpha, this.alpha);
+        this.gl.uniform4fv(uniform.filter, new Float32Array([...this.filter]));
+        this.gl.uniform4fv(uniform.filterMask, new Float32Array([...this.filterMask]));
+        
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
     }
 

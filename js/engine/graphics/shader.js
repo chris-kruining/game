@@ -27,6 +27,8 @@ export default class Shader
 
         gl.shaderSource(this._shader, Shader[type]);
         gl.compileShader(this._shader);
+    
+        console.log(gl.getShaderInfoLog(this._shader));
 
         if(!gl.getShaderParameter(this._shader, gl.COMPILE_STATUS))
         {
@@ -60,7 +62,6 @@ export default class Shader
             void main() {
                 gl_Position = u_posMatrix * a_position;
                 v_texcoord = (u_texMatrix * vec4(a_texcoord, 0, 1)).xy;
-                //v_texcoord = a_texcoord;
             }
         `;
     }
@@ -73,9 +74,15 @@ export default class Shader
             varying vec2 v_texcoord;
             
             uniform sampler2D u_texture;
+            uniform float u_alpha;
+            uniform vec4 u_filter;
+            uniform vec4 u_filter_mask;
             
             void main() {
                 gl_FragColor = texture2D(u_texture, v_texcoord);
+                gl_FragColor.a *= u_alpha;
+                gl_FragColor.rgba += u_filter * u_filter_mask;
+                gl_FragColor.rgb *= gl_FragColor.a;
             }
         `;
     }

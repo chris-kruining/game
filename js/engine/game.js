@@ -1,7 +1,6 @@
 'use strict';
 
 import Scene from './scene.js';
-import Resources from './network/resources.js';
 
 export default class Game
 {
@@ -16,10 +15,11 @@ export default class Game
 
     addScene(scene)
     {
+        scene = new scene(this);
+        
         this.scenes.push(scene);
-        scene._owner = this;
-
-        return scene.setup();
+        
+        return scene.install();
     }
 
     selectScene(scene)

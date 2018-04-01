@@ -25,6 +25,9 @@ export default class ShaderProgram
                     posMatrix: this.getUniformLocation('u_posMatrix'),
                     texMatrix: this.getUniformLocation('u_texMatrix'),
                     texture: this.getUniformLocation('u_texture'),
+                    alpha: this.getUniformLocation('u_alpha'),
+                    filter: this.getUniformLocation('u_filter'),
+                    filterMask: this.getUniformLocation('u_filter_mask'),
                 },
             },
         };

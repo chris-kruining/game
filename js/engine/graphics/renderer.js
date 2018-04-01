@@ -14,15 +14,21 @@ export default class Renderer
         this.canvas.height = document.documentElement.clientHeight;
         this.canvas.style.position = 'fixed';
         this.canvas.style.top = 0;
-        this.canvas.style.zIndex = 100;
+        // this.canvas.style.background = '#f0f';
 
         document.body.appendChild(this.canvas);
 
         this._stack = [];
         this._playState = Renderer.stopped;
 
-        this.context = this.canvas.getContext('webgl');
-        this.context.clearColor(1.0, 0.0, 1.0, .5);
+        this.context = this.canvas.getContext('webgl', {
+            // premultipliedAlpha: false,
+            // alpha: false,
+        });
+        this.context.clearColor(.5, 0, .5, .1);
+        this.context.disable(this.context.DEPTH_TEST);
+        this.context.enable(this.context.BLEND);
+        this.context.blendFunc(this.context.ONE, this.context.ONE_MINUS_SRC_ALPHA);
 
         this._program = new ShaderProgram(this.context);
     }
@@ -30,6 +36,7 @@ export default class Renderer
     play()
     {
         this._playState = Renderer.playing;
+        this.canvas.style.zIndex = 100;
         this.loop();
     }
 
@@ -41,6 +48,7 @@ export default class Renderer
     stop()
     {
         this._playState = Renderer.stopped;
+        this.canvas.style.zIndex = 1;
     }
 
     loop()
@@ -48,9 +56,9 @@ export default class Renderer
         this.resize();
         this.clear();
 
-        for(let item of this._stack)
+        for(let [i, item] of Object.entries(this._stack))
         {
-            item.render();
+            item.render(this);
         }
 
         if(this._playState === Renderer.playing)
@@ -83,7 +91,7 @@ export default class Renderer
         {
             throw new Error('Renderer.add expected an RenderElement, got something else');
         }
-
+        
         this._stack.push(element);
     }
 
