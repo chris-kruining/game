@@ -14,7 +14,6 @@ export default class Renderer
         this.canvas.height = document.documentElement.clientHeight;
         this.canvas.style.position = 'fixed';
         this.canvas.style.top = 0;
-        // this.canvas.style.background = '#f0f';
 
         document.body.appendChild(this.canvas);
 
@@ -22,10 +21,10 @@ export default class Renderer
         this._playState = Renderer.stopped;
 
         this.context = this.canvas.getContext('webgl', {
-            // premultipliedAlpha: false,
-            // alpha: false,
+            premultiplyAlpha: true,
         });
-        this.context.clearColor(.5, 0, .5, .1);
+        // this.context.clearColor(.5, 0, .5, .1);
+        this.context.clearColor(0, 0, 0, 1);
         this.context.disable(this.context.DEPTH_TEST);
         this.context.enable(this.context.BLEND);
         this.context.blendFunc(this.context.ONE, this.context.ONE_MINUS_SRC_ALPHA);

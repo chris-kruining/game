@@ -6,6 +6,10 @@
         <title>digimon</title>
 
         <style>
+            html {
+                touch-action: none;
+            }
+
             body
             {
                 display: grid;
@@ -41,6 +45,13 @@
                 border-radius: .5em;
                 user-select: none;
             }
+
+            button[reload] {
+                position: fixed;
+                top: .5em;
+                right: .5em;
+                z-index: 1000;
+            }
         </style>
     
         <meta charset="utf-8">
@@ -64,6 +75,8 @@
         <p>I do <b>NOT</b> own any of the assets shown and/or heard</p>
         
         <button start>Start</button>
+
+        <button reload>Update files</button>
 
         <script type="module" src="js/main.js"></script>
         <script>

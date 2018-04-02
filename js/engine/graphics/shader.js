@@ -28,7 +28,7 @@ export default class Shader
         gl.shaderSource(this._shader, Shader[type]);
         gl.compileShader(this._shader);
     
-        console.log(gl.getShaderInfoLog(this._shader));
+        // console.log(gl.getShaderInfoLog(this._shader));
 
         if(!gl.getShaderParameter(this._shader, gl.COMPILE_STATUS))
         {
@@ -80,7 +80,7 @@ export default class Shader
             
             void main() {
                 gl_FragColor = texture2D(u_texture, v_texcoord);
-                gl_FragColor.a *= u_alpha;
+                // gl_FragColor.a *= u_alpha;
                 gl_FragColor.rgba += u_filter * u_filter_mask;
                 gl_FragColor.rgb *= gl_FragColor.a;
             }

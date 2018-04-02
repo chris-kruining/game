@@ -4,6 +4,7 @@ import Renderer from './graphics/renderer.js';
 import RenderElement from './graphics/renderElement.js';
 import Resources from './network/resources.js';
 import Config from './config.js';
+import Input from './input.js';
 
 export default class Scene
 {
@@ -33,7 +34,10 @@ export default class Scene
         this.variables = {};
         this.options = Object.assign({
             resources: {},
+            input: {},
         }, this.__proto__.constructor.config);
+        
+        this.input = new Input(this.options.input);
     }
 
     install()

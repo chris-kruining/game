@@ -1,7 +1,7 @@
 'use strict';
 
 import * as Rasher from '../../rasher.js';
-import * as GameMath from '../../math/exports.js';
+import * as Calculus from '../../math/exports.js';
 import Digimon from '../entities/digimon.js';
 
 const enemies = [
@@ -19,7 +19,7 @@ export default class Battle extends Rasher.Scene {
         
         for(let [i, [x, y, s, w, h, r, n, a, b]] of Object.entries(enemies))
         {
-            this.add(new Digimon(this, n, new GameMath.Vector4(x, y, w, h), s, Number.parseInt(i), a));
+            this.add(new Digimon(this, n, new Calculus.Vector4(x, y, w, h), s, Number.parseInt(i), a));
         }
     }
     

@@ -1,7 +1,7 @@
 'use strict';
 
 import * as Rasher from '../../rasher.js';
-import * as GameMath from '../../math/exports.js';
+import * as Calculus from '../../math/exports.js';
 
 export default class Digimon extends Rasher.Entity
 {
@@ -24,14 +24,12 @@ export default class Digimon extends Rasher.Entity
     load()
     {
         return this.sprite.load().then(img => {
-            this.sprite._srcPosition = new GameMath.Vector2(this.srcVec4.x, this.srcVec4.y);
-            this.sprite._srcSize = new GameMath.Vector2(this.srcVec4.z, this.srcVec4.w);
+            this.sprite._srcPosition = new Calculus.Vector2(this.srcVec4.x, this.srcVec4.y);
+            this.sprite._srcSize = new Calculus.Vector2(this.srcVec4.z, this.srcVec4.w);
             
             this.origSize = this.sprite._srcSize;
             this.origPos = this.sprite._srcPosition.x;
             
-            console.log(this.origSize);
-    
             let frameBlender = () => Rasher.Animation.ease(f =>
             {
                 // console.log([ 1 - f, f ]);
@@ -43,7 +41,7 @@ export default class Digimon extends Rasher.Entity
             }).then(() =>
             {
                 this.positions[0] = this.position;
-                this.frame = ++this.frame % 3;
+                this.frame = ++this.frame % 4;
                 this.positions[1] = this.position;
         
                 frameBlender();
@@ -53,7 +51,7 @@ export default class Digimon extends Rasher.Entity
             
             Rasher.Animation.ease(f =>
             {
-                this.sprite.filterMask = new GameMath.Vector4(1 - f, 1 - f, 1 - f, 0);
+                this.sprite.filterMask = new Calculus.Vector4(1 - f, 1 - f, 1 - f, 0);
             }, {
                 duration: Math.random() * 1500 + 1000,
                 easing: 'easeOutCubic',
@@ -63,7 +61,7 @@ export default class Digimon extends Rasher.Entity
     
     get position()
     {
-        return (this.origPos || 0) + Math.abs(((this.frame + 2) % 3) - 2) * (this.sprite._srcSize.x + this.space);
+        return (this.origPos || 0) + Math.abs(((this.frame + 2) % 4) - 2) * (this.sprite._srcSize.x + this.space);
     }
     
     render(renderer)
@@ -72,7 +70,7 @@ export default class Digimon extends Rasher.Entity
         {
             this.sprite.size = this.origSize.multiply(renderer.width / 700);
             // this.sprite.size = this.origSize.multiply(3);
-            this.sprite.position = new GameMath.Vector2(
+            this.sprite.position = new Calculus.Vector2(
                 renderer.width / 7 * (this.pos + 1) + 40 * (this.pos - 2),
                 renderer.height * 2 / 3 - this.sprite.size.y
             );
