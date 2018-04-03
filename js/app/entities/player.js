@@ -8,25 +8,27 @@ export default class Player extends Rasher.Entity
     constructor(renderer, key)
     {
         super();
-        
-        this.size = 100;
+
+        this.size = 50;
         this._movement = new Calculus.Vector2(0);
+        this._animationState = new Calculus.Vector4(0, 0, 0, 0);
+        this._animationLoop = null;
         this.renderer = renderer;
-        this.frame = Math.floor(Math.random() * 3);
+        this.frame = Math.floor(Math.random() * 2);
         this.sprite = new Rasher.Sprite(renderer, key);
     }
-    
+
     load()
     {
         return this.sprite.load().then(img =>
         {
             this.sprite.size = new Calculus.Vector2(this.size, this.size * 2);
             this.sprite.position = new Calculus.Vector2(
-                this.renderer.width + this.sprite.size.x,
-                this.renderer.height + this.sprite.size.y
+                this.renderer.width - this.sprite.size.x,
+                this.renderer.height - this.sprite.size.y
             ).multiply(.5);
             this.sprite._srcSize = new Calculus.Vector2(20, 38);
-    
+
             let frameBlender = () => Rasher.Animation.ease(f =>
             {
                 // console.log([ 1 - f, f ]);
@@ -39,68 +41,87 @@ export default class Player extends Rasher.Entity
             {
                 // this.sprite._srcPosition.x = (this.frame + 1) * this.sprite._srcSize.x;
                 this.frame = ++this.frame % 2;
-        
+
                 frameBlender();
             });
-    
+
             frameBlender();
         });
     }
-    
+
     render(renderer)
     {
-        let t = new Calculus.Vector4(0, 0, 0, 0);
-        
+        let size = this.sprite.size.clone;
+        let position = this.sprite.position.clone;
+
         if(this._movement.magnitude > 0)
         {
-            switch(Math.round(this._movement.angle))
+            switch(this._movement.snapped)
             {
                 case 0:
                 case 180:
-                    t.y = 2;
+                case -180:
+                    this._animationState.y = 2;
                     break;
-                    
-                case -27:
-                case -153:
-                    t.y = 1;
+
+                case -45:
+                case -135:
+                    this._animationState.y = 1;
                     break;
-                    
-                case 27:
-                case 153:
-                    t.y = 3;
+
+                case 45:
+                case 135:
+                    this._animationState.y = 3;
                     break;
-        
-                default:
-                    t.y = 0;
+
+                case 90:
+                    this._animationState.y = 4;
+                    break;
+
+                case -90:
+                    this._animationState.y = 0;
+            }
+
+            this._animationState.z = this._movement.angle > 90 || this._movement.angle < -90;
+
+            if(this._animationLoop === null)
+            {
+                this._animationLoop = setInterval(() => {
+                    this._animationState.x = this.frame + 1;
+                    this.frame = ++this.frame % 2;
+                }, 150);
             }
         }
         else
         {
-            t.x = 0;
+            this._animationState.x = 0;
+
+            if(this._animationLoop !== null)
+            {
+                clearInterval(this._animationLoop);
+                this._animationLoop = null;
+            }
         }
-        
-        let size = this.sprite.size.clone;
-        let position = this.sprite.position.clone;
-        
-        if(this._movement.angle > 90 || this._movement.angle < -90)
+
+        if(this._animationState.z === true)
         {
             this.sprite.position.x += this.size;
             this.sprite.size.x *= -1;
         }
-        
-        this.sprite._srcPosition.x = 0;
-        this.sprite._srcPosition.y = t.y * this.sprite._srcSize.y;
-        
+
+        this.sprite._srcPosition.x = this._animationState.x * this.sprite._srcSize.x;
+        this.sprite._srcPosition.y = this._animationState.y * this.sprite._srcSize.y;
+
         this.sprite.render();
-        
+
         this.sprite.size = size;
         this.sprite.position = position;
     }
-    
+
     loop()
     {
     }
-    
+
     set movement(movement)
     {
         this._movement = movement;

@@ -39,11 +39,11 @@ export default class Exploring extends Rasher.Scene
         );
         joystick = new Joystick(this.renderer, 'joystick');
         player = new Player(this.renderer, 'player');
-        
+
         this.add(terrain);
         this.add(player);
         this.add(joystick);
-        
+
         this.input.listen({
             forward: state => {
                 cameraDelta.y += state === true ? 1 : -1;
@@ -52,28 +52,29 @@ export default class Exploring extends Rasher.Scene
                 cameraDelta.y += state === true ? -1 : 1;
             },
             left: state => {
-                cameraDelta.x += state === true ? 2 : -2;
+                cameraDelta.x += state === true ? 1 : -1;
             },
             right: state => {
-                cameraDelta.x += state === true ? -2 : 2;
+                cameraDelta.x += state === true ? -1 : 1;
             },
         })
     }
-    
+
     loop(game)
     {
         if(terrain === null)
         {
             return;
         }
-        
-        let delta = cameraDelta.max().add(joystick.movement.multiply(-1)).max().multiply(7.5);
-        
-        terrain.camera.x += delta.x;
-        terrain.camera.y += delta.y;
-        player.movement = delta.max();
+
+        let delta = cameraDelta.add(joystick.movement.multiply(-1)).max();
+        let movement = delta.multiply(2, 1).max().multiply(7.5);
+
+        terrain.camera.x += movement.x;
+        terrain.camera.y += movement.y;
+        player.movement = delta;
     }
-    
+
     static get config()
     {
         return {
