@@ -8,16 +8,16 @@ const mobile = navigator.userAgent.match(/Android|webOS|IPhone|Ipad|Ipod|Windows
 
 let game = new Game();
 let scenes = [
-    Battle,
     Exploring,
+    Battle,
 ];
 
 function main()
 {
     Promise.all(scenes.map(scene => game.addScene(scene))).then(loadedScenes => {
         scenes = loadedScenes;
-    
-        game.selectScene(scenes[1]);
+
+        game.selectScene(scenes[0]);
     });
 }
 
