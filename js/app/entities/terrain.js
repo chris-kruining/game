@@ -5,17 +5,15 @@ import * as Calculus from '../../math/exports.js';
 
 export default class Terrain extends Rasher.Entity
 {
-    constructor(renderer, key, terrain, spriteDimensions)
+    constructor(renderer, key, terrain, spriteDimensions, renderCallback = null)
     {
         super();
         
         this._terrain = terrain;
         this._unit = 64;
-        this._camPos = new Calculus.Vector2(
-            renderer.width - this._unit * (terrain[0].length + terrain[0][0].length),
-            renderer.height - this._unit * .25 * terrain[0][0].length
-        ).multiply(.5);
+        this._camPos = new Calculus.Vector3(0).multiply(.5);
         this._dimensions = spriteDimensions;
+        this._renderCallback = renderCallback;
         this.sprite = new Rasher.Sprite(renderer, key);
     }
     
@@ -31,6 +29,8 @@ export default class Terrain extends Rasher.Entity
     {
         for(let [layer, rows] of Object.entries(this._terrain))
         {
+            layer = Number.parseInt(layer);
+    
             for(let [row, columns] of  Object.entries(rows))
             {
                 row = Number.parseInt(row);
@@ -39,22 +39,30 @@ export default class Terrain extends Rasher.Entity
                 {
                     column = Number.parseInt(column);
                     
-                    for(let tile of [ 3, ...stack ])
+                    for(let tile of stack)
                     {
                         this.sprite._srcPosition = new Calculus.Vector2(
                             tile % this._dimensions.x,
                             Math.floor(tile / this._dimensions.x)
                         ).multiply(this._unit);
                         
-                        this.sprite.position = new Calculus.Vector2(
-                            column + row,
-                            .5 * (row - column),
-                        ).multiply(this._unit);
+                        let camera = new Calculus.Vector2(...this._camPos);
+                        camera.angle += 45;
+                        camera = camera.multiply(2, 1);
                         
-                        this.sprite.position.x += this._camPos.x;
-                        this.sprite.position.y += this._camPos.y;
+                        this.sprite.position = new Calculus.Vector2(
+                            column + row - camera.x,
+                            .5 * (row - column - camera.y) - .9 - layer + this._camPos.z,
+                        )
+                            .multiply(this._unit)
+                            .add(new Calculus.Vector2(renderer.width, renderer.height).multiply(.5));
                         
                         this.sprite.render();
+                        
+                        if(this._renderCallback !== null)
+                        {
+                            this._renderCallback(new Calculus.Vector3(row, column, layer));
+                        }
                     }
                 }
             }
@@ -68,5 +76,10 @@ export default class Terrain extends Rasher.Entity
     get camera()
     {
         return this._camPos;
+    }
+    
+    set camera(vector3)
+    {
+        this._camPos = vector3;
     }
 }

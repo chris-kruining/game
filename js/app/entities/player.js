@@ -13,6 +13,7 @@ export default class Player extends Rasher.Entity
         this._movement = new Calculus.Vector2(0);
         this._animationState = new Calculus.Vector4(0, 0, 0, 0);
         this._animationLoop = null;
+        this._position = new Calculus.Vector3(7, 5, 1);
         this.renderer = renderer;
         this.frame = Math.floor(Math.random() * 2);
         this.sprite = new Rasher.Sprite(renderer, key);
@@ -27,7 +28,7 @@ export default class Player extends Rasher.Entity
                 this.renderer.width - this.sprite.size.x,
                 this.renderer.height - this.sprite.size.y
             ).multiply(.5);
-            this.sprite._srcSize = new Calculus.Vector2(20, 38);
+            this.sprite._srcSize = new Calculus.Vector2(19, 38);
 
             let frameBlender = () => Rasher.Animation.ease(f =>
             {
@@ -48,8 +49,13 @@ export default class Player extends Rasher.Entity
             frameBlender();
         });
     }
-
+    
     render(renderer)
+    {
+    
+    }
+
+    draw(renderer)
     {
         let size = this.sprite.size.clone;
         let position = this.sprite.position.clone;
@@ -109,7 +115,7 @@ export default class Player extends Rasher.Entity
             this.sprite.size.x *= -1;
         }
 
-        this.sprite._srcPosition.x = this._animationState.x * this.sprite._srcSize.x;
+        this.sprite._srcPosition.x = this._animationState.x * this.sprite._srcSize.x + this._animationState.x + 1;
         this.sprite._srcPosition.y = this._animationState.y * this.sprite._srcSize.y;
 
         this.sprite.render();
@@ -125,5 +131,10 @@ export default class Player extends Rasher.Entity
     set movement(movement)
     {
         this._movement = movement;
+    }
+
+    get position()
+    {
+        return this._position;
     }
 }
