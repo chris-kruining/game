@@ -62,10 +62,19 @@ export default class Vector3
 
         return new Vector3(this.x * x, this.y * y, this.z * z);
     }
-    
+
     equals(b)
     {
         return this.x === b.x && this.y === b.y && this.z === b.z;
+    }
+
+    floor()
+    {
+        return new Vector3(
+            Math.floor(this._x),
+            Math.floor(this._y),
+            Math.floor(this._z)
+        );
     }
 
     *[Symbol.iterator]()
@@ -114,7 +123,7 @@ export default class Vector3
     {
         return new Vector3(this.x, this.y, this.z);
     }
-    
+
     static get normalized()
     {
         return new Vector3(Math.sqrt(3));
