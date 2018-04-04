@@ -1,21 +1,23 @@
 'use strict';
 
-export default
-
-class Vector3
+export default class Vector3
 {
     constructor(x, y, z)
     {
         this._x = x;
-        this._y = y;
-        this._z = z;
+        this._y = y !== undefined
+            ? y
+            : x;
+        this._z = z !== undefined
+            ? z
+            : x;
     }
 
     normalize()
     {
         if(this.magnitude === 0)
         {
-            return (new Vector3(1, 1, 1)).normalize();
+            return Vector3.normalized;
         }
 
         let f = this.magnitude;
@@ -24,16 +26,12 @@ class Vector3
 
     max(max = 1)
     {
-        let top = this.clone.normalize();
-        top.x *= max;
-        top.y *= max;
-
-        return new Vector2(Math.min(this.x, top.x), Math.min(this.y, top.y));
+        return this.multiply(1 / Math.max(1, this.magnitude / max));
     }
 
     add(x, y, z)
     {
-        if(x instanceof Vector2)
+        if(x instanceof Vector3)
         {
             y = x.y;
             z = x.z;
@@ -50,7 +48,7 @@ class Vector3
 
     multiply(x, y, z)
     {
-        if(x instanceof Vector2)
+        if(x instanceof Vector3)
         {
             y = x.y;
             z = x.z;
@@ -63,6 +61,11 @@ class Vector3
         }
 
         return new Vector3(this.x * x, this.y * y, this.z * z);
+    }
+    
+    equals(b)
+    {
+        return this.x === b.x && this.y === b.y && this.z === b.z;
     }
 
     *[Symbol.iterator]()
@@ -110,5 +113,10 @@ class Vector3
     get clone()
     {
         return new Vector3(this.x, this.y, this.z);
+    }
+    
+    static get normalized()
+    {
+        return new Vector3(Math.sqrt(3));
     }
 }

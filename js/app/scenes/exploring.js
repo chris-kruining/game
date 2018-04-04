@@ -15,6 +15,8 @@ export default class Exploring extends Rasher.Scene
 {
     setup(game)
     {
+        joystick = new Joystick(this.renderer, 'joystick');
+        player = new Player(this.renderer, 'player');
         terrain = new Terrain(
             this.renderer,
             'forrest',
@@ -55,13 +57,20 @@ export default class Exploring extends Rasher.Scene
                 ],
             ],
             new Calculus.Vector2(10)
+            (pos) => {
+                if(pos.equals(player.position))
+                {
+                    // console.log(...pos);
+                    player.draw(this.renderer);
+            }
+                }
         );
-        joystick = new Joystick(this.renderer, 'joystick');
-        player = new Player(this.renderer, 'player');
 
         this.add(terrain);
         this.add(player);
         this.add(joystick);
+        
+        terrain.camera = player.position;
 
         this.input.listen({
             forward: state => {
@@ -87,10 +96,10 @@ export default class Exploring extends Rasher.Scene
         }
 
         let delta = cameraDelta.add(joystick.movement.multiply(-1)).max();
-        let movement = delta.multiply(2, 1).max().multiply(7.5);
-
-        terrain.camera.x += movement.x;
-        terrain.camera.y += movement.y;
+        let movement = delta.multiply(-.5, -.25).max(.25);
+        movement.angle = movement.angle - 45;
+        
+        terrain.camera = terrain.camera.add(new Calculus.Vector3(...movement, 0));
         player.movement = delta;
     }
 
@@ -100,7 +109,7 @@ export default class Exploring extends Rasher.Scene
             resources: {
                 forrest: 'img/digimon/maps/forrest.png',
                 joystick: 'img/joystick.png',
-                player: 'img/digimon/characters/male_red.png',
+                player: 'img/digimon/characters/female_red.png',
                 music: 'audio/digimon/dawn/battle_02.mp3',
             },
             input: {

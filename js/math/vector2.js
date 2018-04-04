@@ -22,9 +22,7 @@ export default class Vector2 {
 
     max(max = 1)
     {
-        return this.multiply(
-            1 / Math.max(1, this.magnitude / this.clone.normalize().multiply(max).magnitude)
-        );
+        return this.multiply(1 / Math.max(1, this.magnitude / max));
     }
 
     add(x, y)
@@ -137,6 +135,6 @@ export default class Vector2 {
 
     static get normalized()
     {
-        return new Vector2(Math.sqrt(1));
+        return new Vector2(Math.sqrt(2));
     }
 }
