@@ -39,7 +39,7 @@ export default class Terrain extends Rasher.Entity
                 {
                     column = Number.parseInt(column);
                     
-                    for(let tile of [ 3, ...stack ])
+                    for(let tile of stack)
                     {
                         this.sprite._srcPosition = new Calculus.Vector2(
                             tile % this._dimensions.x,
@@ -48,7 +48,7 @@ export default class Terrain extends Rasher.Entity
                         
                         this.sprite.position = new Calculus.Vector2(
                             column + row,
-                            .5 * (row - column),
+                            .5 * (row - column - 2 * layer),
                         ).multiply(this._unit);
                         
                         this.sprite.position.x += this._camPos.x;
