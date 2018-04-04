@@ -77,6 +77,24 @@ export default class Vector3
         );
     }
 
+    ceil()
+    {
+        return new Vector3(
+            Math.ceil(this._x),
+            Math.ceil(this._y),
+            Math.ceil(this._z)
+        );
+    }
+
+    round()
+    {
+        return new Vector3(
+            Math.round(this._x),
+            Math.round(this._y),
+            Math.round(this._z)
+        );
+    }
+
     *[Symbol.iterator]()
     {
         yield this.x;

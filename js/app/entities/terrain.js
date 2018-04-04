@@ -55,16 +55,9 @@ export default class Terrain extends Rasher.Entity
                             .multiply(this._unit)
                             .add(new Calculus.Vector2(renderer.width, renderer.height).multiply(.5));
 
-                        // this.sprite.position = new Calculus.Vector2(
-                        //     x - this._camPos.x - y - this._camPos.y,
-                        //     .5 * (x - this._camPos.x + y - this._camPos.y)// - .9 - z + this._camPos.z,
-                        // )
-                        //     .multiply(this._unit)
-                        //     .add(new Calculus.Vector2(renderer.width, renderer.height).multiply(.5));
-
                         this.sprite.render();
 
-                        if(this._renderCallback !== null && pos.equals(this._camPos.floor()))
+                        if(this._renderCallback !== null && pos.equals(this._camPos.round()))
                         {
                             this.sprite._srcPosition = new Calculus.Vector2(1, 11).multiply(this._unit);
                             this.sprite.render();
