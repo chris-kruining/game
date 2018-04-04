@@ -8,7 +8,7 @@ export default class Terrain extends Rasher.Entity
     constructor(renderer, key, terrain, spriteDimensions, renderCallback = null)
     {
         super();
-        
+
         this._terrain = terrain;
         this._unit = 64;
         this._camPos = new Calculus.Vector3(0).multiply(.5);
@@ -16,7 +16,7 @@ export default class Terrain extends Rasher.Entity
         this._renderCallback = renderCallback;
         this.sprite = new Rasher.Sprite(renderer, key);
     }
-    
+
     load()
     {
         return this.sprite.load().then(img => {
@@ -24,60 +24,68 @@ export default class Terrain extends Rasher.Entity
             this.sprite._srcSize = new Calculus.Vector2(64);
         });
     }
-    
+
     render(renderer)
     {
-        for(let [layer, rows] of Object.entries(this._terrain))
+        for(let [z, rows] of Object.entries(this._terrain))
         {
-            layer = Number.parseInt(layer);
-    
-            for(let [row, columns] of  Object.entries(rows))
+            z = Number.parseInt(z);
+
+            for(let [y, columns] of  Object.entries(rows))
             {
-                row = Number.parseInt(row);
-                
-                for(let [column, stack] of  Object.entries(columns).reverse())
+                y = Number.parseInt(y);
+
+                for(let [x, stack] of  Object.entries(columns))
                 {
-                    column = Number.parseInt(column);
-                    
+                    x = Number.parseInt(x);
+
                     for(let tile of stack)
                     {
+                        let pos = new Calculus.Vector3(y, x, z);
+
                         this.sprite._srcPosition = new Calculus.Vector2(
                             tile % this._dimensions.x,
                             Math.floor(tile / this._dimensions.x)
                         ).multiply(this._unit);
-                        
-                        let camera = new Calculus.Vector2(...this._camPos);
-                        camera.angle += 45;
-                        camera = camera.multiply(2, 1);
-                        
+
                         this.sprite.position = new Calculus.Vector2(
-                            column + row - camera.x,
-                            .5 * (row - column - camera.y) - .9 - layer + this._camPos.z,
+                            x + this._camPos.x - y - this._camPos.y - 1.25,
+                            .5 * (x - this._camPos.x + y - this._camPos.y) - .5 - z + this._camPos.z,
                         )
                             .multiply(this._unit)
                             .add(new Calculus.Vector2(renderer.width, renderer.height).multiply(.5));
-                        
+
+                        // this.sprite.position = new Calculus.Vector2(
+                        //     x - this._camPos.x - y - this._camPos.y,
+                        //     .5 * (x - this._camPos.x + y - this._camPos.y)// - .9 - z + this._camPos.z,
+                        // )
+                        //     .multiply(this._unit)
+                        //     .add(new Calculus.Vector2(renderer.width, renderer.height).multiply(.5));
+
                         this.sprite.render();
-                        
-                        if(this._renderCallback !== null)
+
+                        if(this._renderCallback !== null && pos.equals(this._camPos.floor()))
                         {
-                            this._renderCallback(new Calculus.Vector3(row, column, layer));
+                            this.sprite._srcPosition = new Calculus.Vector2(1, 11).multiply(this._unit);
+                            this.sprite.render();
+
+                            this._renderCallback(pos);
                         }
                     }
                 }
             }
         }
     }
-    
+
     loop()
     {
     }
-    
+
     get camera()
     {
         return this._camPos;
     }
-    
+
     set camera(vector3)
     {
         this._camPos = vector3;
