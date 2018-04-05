@@ -8,5 +8,11 @@ import Background from './engine/graphics/elements/background.js';
 import Texture from './engine/graphics/elements/texture.js';
 import * as Audio from './engine/audio/exports.js';
 import Animation from './engine/graphics/animation.js';
+import Resources from './engine/network/resources.js';
 
-export { Game, Scene, Entity, Sprite, Background, Texture, Audio, Animation };
+export {
+    Game, Scene, Entity,
+    Sprite, Background,
+    Texture, Audio,
+    Animation, Resources,
+};

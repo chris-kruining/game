@@ -2,31 +2,56 @@
 
 import * as Rasher from '../../rasher.js';
 import * as Calculus from '../../math/exports.js';
+import Tile from './tile.js';
 
 export default class Terrain extends Rasher.Entity
 {
     constructor(renderer, key, terrain, spriteDimensions, renderCallback = null)
     {
         super();
-
+        
+        this._key = key;
+        this._tiles = {};
+        this._renderer = renderer;
         this._terrain = terrain;
         this._unit = 64;
         this._camPos = new Calculus.Vector3(0).multiply(.5);
         this._dimensions = spriteDimensions;
         this._renderCallback = renderCallback;
-        this.sprite = new Rasher.Sprite(renderer, key);
+        this.sprite = null;
     }
 
     load()
     {
-        return this.sprite.load().then(img => {
-            this.sprite.size = new Calculus.Vector2(64 * 2);
-            this.sprite._srcSize = new Calculus.Vector2(64);
-        });
+        return fetch(Rasher.Resources[this._key])
+            .then(r => r.json())
+            .then(({ src, tiles }) =>
+            {
+                let key = `Terrain_${this._key}_sptite`;
+                Rasher.Resources[key] = src.file;
+                
+                this.sprite = new Rasher.Sprite(this._renderer, key);
+                
+                for(let [id, config] of Object.entries(tiles))
+                {
+                    this._tiles[id] = new Tile(config);
+                }
+                
+                return this.sprite.load().then(img =>
+                {
+                    this.sprite.size = new Calculus.Vector2(src.unit * 2);
+                    this.sprite._srcSize = new Calculus.Vector2(src.unit);
+                });
+            });
     }
 
     render(renderer)
     {
+        if(this.sprite === null)
+        {
+            return;
+        }
+        
         for(let [z, rows] of Object.entries(this._terrain))
         {
             z = Number.parseInt(z);
@@ -42,20 +67,20 @@ export default class Terrain extends Rasher.Entity
                     for(let tile of stack)
                     {
                         let pos = new Calculus.Vector3(y, x, z);
-
-                        this.sprite._srcPosition = new Calculus.Vector2(
-                            tile % this._dimensions.x,
-                            Math.floor(tile / this._dimensions.x)
-                        ).multiply(this._unit);
-
+    
                         this.sprite.position = new Calculus.Vector2(
                             x + this._camPos.x - y - this._camPos.y - 1.25,
                             .5 * (x - this._camPos.x + y - this._camPos.y) - .5 - z + this._camPos.z,
                         )
                             .multiply(this._unit)
                             .add(new Calculus.Vector2(renderer.width, renderer.height).multiply(.5));
+                        
+                        for(let i of this._tiles[tile].stack)
+                        {
+                            this.sprite._srcPosition = new Calculus.Vector2(i.x, i.y).multiply(this._unit);
+                            this.sprite.render();
+                        }
 
-                        this.sprite.render();
 
                         if(this._renderCallback !== null && pos.equals(this._camPos.round()))
                         {
