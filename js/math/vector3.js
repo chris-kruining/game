@@ -1,5 +1,7 @@
 'use strict';
 
+import Vector2 from './vector2.js';
+
 export default class Vector3
 {
     constructor(x, y, z)
@@ -44,6 +46,23 @@ export default class Vector3
         }
 
         return new Vector3(this.x + x, this.y + y, this.z + z);
+    }
+
+    subtract(x, y, z)
+    {
+        if(x instanceof Vector3)
+        {
+            y = x.y;
+            z = x.z;
+            x = x.x;
+        }
+        else if(Number.isInteger(x) && y === undefined)
+        {
+            y = x;
+            z = x;
+        }
+
+        return new Vector3(this.x - x, this.y - y, this.z - z);
     }
 
     multiply(x, y, z)
@@ -132,9 +151,19 @@ export default class Vector3
         this._z = z;
     }
 
+    get xy()
+    {
+        return new Vector2(this.x, this.y);
+    }
+
     get magnitude()
     {
         return Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2);
+    }
+
+    get angle()
+    {
+        return new Vector2(this.x, this.y).angle;
     }
 
     get clone()
