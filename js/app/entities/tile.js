@@ -31,4 +31,9 @@ export default class Tile extends Rasher.Entity
     {
         return this.config.sprites;
     }
+    
+    get vertices()
+    {
+        return this.config.vertices || [];
+    }
 }
