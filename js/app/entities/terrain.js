@@ -225,8 +225,6 @@ export default class Terrain extends Rasher.Entity
             {
                 if([0, 3, 5].includes(i))
                 {
-                    console.log(Math.floor(this._camPos.x), vector3.x);
-                    
                     this._camPos.x = Math.max(Math.floor(this._camPos.x), vector3.x);
                 }
                 else if([2, 4, 7].includes(i))

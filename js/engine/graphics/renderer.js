@@ -24,7 +24,7 @@ export default class Renderer
             premultiplyAlpha: true,
         });
         // this.context.clearColor(.5, 0, .5, .1);
-        this.context.clearColor(0, 0, 0, 1);
+        this.context.clearColor(0.1875, 0.1875, 0.2125, 1);
         this.context.disable(this.context.DEPTH_TEST);
         this.context.enable(this.context.BLEND);
         this.context.blendFunc(this.context.ONE, this.context.ONE_MINUS_SRC_ALPHA);
