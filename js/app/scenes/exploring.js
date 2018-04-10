@@ -93,9 +93,9 @@ export default class Exploring extends Rasher.Scene
 
         let delta = cameraDelta.add(joystick.movement.multiply(-1)).max();
         let movement = delta.clone;
-        movement.angle += 45;
+        movement.angle -= 45;
 
-        terrain.camera = terrain.camera.add(new Calculus.Vector3(...movement.multiply(.25, -.25), 0));
+        terrain.camera = terrain.camera.add(new Calculus.Vector3(...movement.multiply(-.25), 0));
         player.movement = delta;
     }
 

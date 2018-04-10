@@ -10,8 +10,6 @@ export default class Tile extends Rasher.Entity
         super();
         
         this.config = config;
-        
-        console.log(config);
     }
     
     load()

@@ -114,6 +114,11 @@ export default class Vector3
         );
     }
 
+    [Symbol.toPrimitive]()
+    {
+        return Object.entries({X: this.x, Y: this.y, Z: this.z}).map(d => d.join(': ')).join(', ');
+    }
+
     *[Symbol.iterator]()
     {
         yield this.x;

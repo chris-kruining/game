@@ -21,7 +21,15 @@ export default class Terrain extends Rasher.Entity
         this._renderCallback = renderCallback;
         this.sprite = null;
         
-        console.log(this._peeked);
+        this._debug = document.createElement('span');
+        this._debug.style.position = 'fixed';
+        this._debug.style.top = '.33em';
+        this._debug.style.left = '.33em';
+        this._debug.style.fontSize = '3em';
+        this._debug.style.color = '#eee';
+        this._debug.style.zIndex = '1000';
+        
+        document.body.appendChild(this._debug);
     }
 
     load()
@@ -50,6 +58,8 @@ export default class Terrain extends Rasher.Entity
 
     render(renderer)
     {
+        this._debug.innerHTML = this._camPos.round();
+        
         if(this.sprite === null)
         {
             return;
@@ -69,10 +79,10 @@ export default class Terrain extends Rasher.Entity
 
                     for(let tile of stack)
                     {
-                        let pos = new Calculus.Vector3(y, x, z);
+                        let pos = new Calculus.Vector3(x, y, z);
 
                         this.sprite.position = new Calculus.Vector2(
-                            x + this._camPos.x - y - this._camPos.y - 1.25,
+                            x + this._camPos.y - y - this._camPos.x - 1.25,
                             .5 * (x - this._camPos.x + y - this._camPos.y) - .9 - z + this._camPos.z,
                         )
                             .multiply(this._unit)
@@ -98,7 +108,7 @@ export default class Terrain extends Rasher.Entity
                                 let peek = this._camPos.add(...v2.map(v => v * -1), 0);
     
                                 this.sprite.position = new Calculus.Vector2(
-                                    x + peek.x - y - peek.y - 1.25,
+                                    x + peek.y - y - peek.x - 1.25,
                                     .5 * (x - peek.x + y - peek.y) - .9,
                                 )
                                     .multiply(this._unit)
@@ -110,7 +120,7 @@ export default class Terrain extends Rasher.Entity
                                 
                                 try
                                 {
-                                    tile = this._terrain[peek.z][peek.x][peek.y];
+                                    tile = this._terrain[peek.z][peek.y][peek.x];
                                 }
                                 catch(e){}
                                 
@@ -221,7 +231,7 @@ export default class Terrain extends Rasher.Entity
                     break;
             }
             
-            if(this._peeked[i] === false)
+            if(this._peeked[i] === false && false)
             {
                 if([0, 3, 5].includes(i))
                 {
