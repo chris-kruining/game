@@ -114,6 +114,15 @@ export default class Vector3
         );
     }
 
+    toFixed(decimals)
+    {
+        return new Vector3(
+            this._x.toFixed(decimals),
+            this._y.toFixed(decimals),
+            this._z.toFixed(decimals)
+        );
+    }
+
     [Symbol.toPrimitive]()
     {
         return Object.entries({X: this.x, Y: this.y, Z: this.z}).map(d => d.join(': ')).join(', ');

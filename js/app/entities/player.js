@@ -13,7 +13,7 @@ export default class Player extends Rasher.Entity
         this._movement = new Calculus.Vector2(0);
         this._animationState = new Calculus.Vector4(0, 0, 0, 0);
         this._animationLoop = null;
-        this._position = new Calculus.Vector3(3, 9, 1);
+        this._position = new Calculus.Vector3(4.5, 8.5, 1);
         this.renderer = renderer;
         this.frame = Math.floor(Math.random() * 2);
         this.sprite = new Rasher.Sprite(renderer, key);
