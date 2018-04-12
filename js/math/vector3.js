@@ -73,13 +73,27 @@ export default class Vector3
             z = x.z;
             x = x.x;
         }
-        else if(Number.isInteger(x) && y === undefined)
+        else if(!Number.isNaN(x) && y === undefined)
         {
             y = x;
             z = x;
         }
 
         return new Vector3(this.x * x, this.y * y, this.z * z);
+    }
+
+    dotProduct(b)
+    {
+        return this.x * b.x + this.y * b.y + this.z * b.z;
+    }
+
+    crossProduct(b)
+    {
+        return new Vector3(
+            this.x * b.z - this.z * b.y,
+            this.z * b.x - this.x * b.z,
+            this.x * b.y - this.y * b.x
+        );
     }
 
     equals(b)

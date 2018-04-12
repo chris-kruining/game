@@ -16,16 +16,7 @@ function pointInVertex(point, vertex)
     let b1 = sign(point, vertex[0], vertex[1]) < 0.0;
     let b2 = sign(point, vertex[1], vertex[2]) < 0.0;
     let b3 = sign(point, vertex[2], vertex[0]) < 0.0;
-    
-    if(b1 === b2 && b2 === b3)
-    {
-        console.log(
-            sign(point, vertex[0], vertex[1]),
-            sign(point, vertex[1], vertex[2]),
-            sign(point, vertex[2], vertex[0])
-        );
-    }
-    
+
     return b1 === b2 && b2 === b3;
 }
 
@@ -45,7 +36,7 @@ export default class Terrain extends Rasher.Entity
         this._dimensions = spriteDimensions;
         this._renderCallback = renderCallback;
         this.sprite = null;
-        
+
         this._debug = document.createElement('span');
         this._debug.style.position = 'fixed';
         this._debug.style.top = '.33em';
@@ -53,7 +44,7 @@ export default class Terrain extends Rasher.Entity
         this._debug.style.fontSize = '3em';
         this._debug.style.color = '#eee';
         this._debug.style.zIndex = '1000';
-        
+
         document.body.appendChild(this._debug);
     }
 
@@ -84,7 +75,7 @@ export default class Terrain extends Rasher.Entity
     render(renderer)
     {
         this._debug.innerHTML = this._camPos.toFixed(2);
-        
+
         if(this.sprite === null)
         {
             return;
@@ -112,7 +103,7 @@ export default class Terrain extends Rasher.Entity
                         )
                             .multiply(this._unit)
                             .add(new Calculus.Vector2(renderer.width, renderer.height).multiply(.5));
-                        
+
                         if(x === 5 && y === 0)
                         {
                             this.sprite.filterMask.x = 1;
@@ -128,12 +119,12 @@ export default class Terrain extends Rasher.Entity
                         if(this._renderCallback !== null && pos.equals(this._camPos.floor()))
                         {
                             this.sprite._srcPosition = new Calculus.Vector2(5, 8).multiply(this._unit);
-                            
+
                             this._peek(x, y, z, renderer);
 
                             this._renderCallback(pos);
                         }
-                        
+
                         this.sprite.filterMask = new Calculus.Vector4(0, 0, 0, 0);
                     }
                 }
@@ -144,7 +135,7 @@ export default class Terrain extends Rasher.Entity
     loop()
     {
     }
-    
+
     _peek(x, y, z, renderer)
     {
         let draw = (v2, pIndex) => {
@@ -160,18 +151,18 @@ export default class Terrain extends Rasher.Entity
             peek = this._camPos.add(...v2, 0).floor();
 
             let tile;
-            
+
             try
             {
                 tile = this._terrain[peek.z][peek.y][peek.x];
             }
             catch(e){}
-            
+
             if(tile === undefined)
             {
                 return;
             }
-            
+
             vertexSearch:
             for(let vertices of tile.map(t => this._tiles[t].vertices))
             {
@@ -180,29 +171,29 @@ export default class Terrain extends Rasher.Entity
                     let a = vertices[i + 0];
                     let b = vertices[i + 1];
                     let c = vertices[i + 2];
-                    
+
                     if([a, b, c].map(v => Math.abs(v[2] + z - this._camPos.z)).some(v => v <= .25))
                     {
                         this.sprite.filterMask.y = 1;
-                        
+
                         this._peeked[pIndex] = true;
-                        
+
                         break vertexSearch;
                     }
                 }
             }
-            
+
             if(this.sprite.filterMask.y === 0)
             {
                 this.sprite.filterMask.x = 1;
 
                 this._peeked[pIndex] = false;
             }
-            
+
             this.sprite.render();
             this.sprite.filterMask = new Calculus.Vector4(0, 0, 0, 0);
         };
-        
+
         draw([-1,  0], 0);
         draw([ 0, -1], 1);
         draw([ 1,  0], 2);
@@ -217,11 +208,11 @@ export default class Terrain extends Rasher.Entity
     set camera(vector3)
     {
         let delta = this._camPos.subtract(vector3);
-        
+
         if(delta.magnitude > 0)
         {
             let i = (Math.round(delta.angle) + 360) % 360 / 45;
-            
+
             if([0, 1, 7].includes(i) && this._peeked[0] === false)
             {
                 this._camPos.x = Math.max(Math.floor(this._camPos.x), vector3.x);
@@ -234,7 +225,7 @@ export default class Terrain extends Rasher.Entity
             {
                 this._camPos.x = vector3.x;
             }
-            
+
             if([1, 2, 3].includes(i) && this._peeked[1] === false)
             {
                 this._camPos.y = Math.max(Math.floor(this._camPos.y), vector3.y);
@@ -247,34 +238,43 @@ export default class Terrain extends Rasher.Entity
             {
                 this._camPos.y = vector3.y;
             }
-            
+
             let floored = this._camPos.floor();
             let local = this._camPos.add(floored.multiply(-1));
             let tile = this._terrain[floored.z][floored.y][floored.x];
-            
+
             if(tile !== undefined && this._tiles.hasOwnProperty(tile))
             {
                 let vertices = this._tiles[tile].vertices;
-    
+
                 for(let i = 0; i < vertices.length; i += 3)
                 {
-                    let a = vertices[i + 0];
-                    let b = vertices[i + 1];
-                    let c = vertices[i + 2];
-        
-                    console.log(pointInVertex(
-                        local,
-                        [
-                            new Calculus.Vector2(a[0], a[1]),
-                            new Calculus.Vector2(b[0], b[1]),
-                            new Calculus.Vector2(c[0], c[1]),
-                        ]
-                    ));
+                    let a = new Calculus.Vector3(...vertices[i + 0]);
+                    let b = new Calculus.Vector3(...vertices[i + 1]);
+                    let c = new Calculus.Vector3(...vertices[i + 2]);
+
+                    if(pointInVertex(floored, [a, b, c]))
+                    {
+                        //camera
+                        let pos = new Calculus.Vector3(local.x, local.y, 0); // x-y pos ignoring current z
+                        let dir = new Calculus.Vector3(0, 0, 1); // straight up
+
+                        // plane
+                        let ab = b.add(a.multiply(-1));
+                        let ac = c.add(a.multiply(-1));
+                        let normal = ab.crossProduct(ac);
+
+                        let t = (normal.dotProduct(a) - normal.dotProduct(pos)) / normal.dotProduct(dir);
+
+                        pos = pos.add(dir.multiply(t));
+
+                        vector3.z = Math.max(1, Math.min(1.9, floored.z + pos.z));
+                    }
                 }
             }
-            
+
             this._camPos.z = vector3.z;
         }
-        
+
     }
 }

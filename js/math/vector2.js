@@ -55,6 +55,11 @@ export default class Vector2 {
         return new Vector2(this.x * x, this.y * y);
     }
 
+    dotProduct(b)
+    {
+        return this.x * b.x + this.y * b.y;
+    }
+
     *[Symbol.iterator]()
     {
         yield this.x;
