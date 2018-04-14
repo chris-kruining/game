@@ -198,6 +198,11 @@ export default class Vector3
     {
         return new Vector3(this.x, this.y, this.z);
     }
+    
+    get normalized()
+    {
+        return this.normalize();
+    }
 
     static get normalized()
     {

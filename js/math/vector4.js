@@ -106,6 +106,11 @@ class Vector4
     {
         this._w = w;
     }
+    
+    get normalized()
+    {
+        return this.normalize();
+    }
 
     get magnitude()
     {

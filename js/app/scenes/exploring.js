@@ -47,8 +47,8 @@ export default class Exploring extends Rasher.Scene
                     [[ 0], [ 0], [ 0], [77], [75], [75], [73], [ 0], [ 0], [ 0]],
                     [[ 0], [ 0], [ 0], [77], [75], [75], [73], [ 0], [ 0], [ 0]],
                     [[ 0], [ 0], [ 0], [51], [31], [43], [73], [ 0], [ 0], [ 0]],
-                    [[ 0], [ 0], [ 0], [ 9], [ 9], [36], [73], [ 0], [ 0], [ 0]],
-                    [[ 0], [ 0], [ 0], [ 9], [ 9], [36], [73], [ 0], [ 0], [ 0]],
+                    [[ 0], [ 0], [52], [ 9], [ 9], [36], [73], [ 0], [ 0], [ 0]],
+                    [[ 0], [ 0], [ 9], [ 9], [ 9], [36], [73], [ 0], [ 0], [ 0]],
                     [[ 0], [ 0], [ 0], [ 9], [ 9], [36], [73], [ 0], [ 0], [ 0]],
                     [[ 0], [ 0], [ 0], [ 9], [ 9], [72], [71], [ 0], [ 0], [ 0]],
                     [[ 0], [ 0], [ 0], [ 0], [ 0], [ 0], [ 0], [ 0], [ 0], [ 0]],
@@ -95,7 +95,7 @@ export default class Exploring extends Rasher.Scene
         let movement = delta.clone;
         movement.angle -= 45;
 
-        terrain.camera = terrain.camera.add(new Calculus.Vector3(...movement.multiply(-.25), 0));
+        terrain.moveTo(terrain.camera.add(new Calculus.Vector3(...movement.multiply(-.25), 0)));
         player.movement = delta;
     }
 

@@ -207,6 +207,11 @@ export default class Terrain extends Rasher.Entity
 
     set camera(vector3)
     {
+        this._camPos = vector3;
+    }
+
+    moveTo(vector3)
+    {
         let delta = this._camPos.subtract(vector3);
 
         if(delta.magnitude > 0)
@@ -215,28 +220,20 @@ export default class Terrain extends Rasher.Entity
 
             if([0, 1, 7].includes(i) && this._peeked[0] === false)
             {
-                this._camPos.x = Math.max(Math.floor(this._camPos.x), vector3.x);
+                vector3.x = Math.max(Math.floor(this._camPos.x) + .001, vector3.x);
             }
             else if([3, 4, 5].includes(i) && this._peeked[2] === false)
             {
-                this._camPos.x = Math.min(Math.ceil(this._camPos.x) - .0000001, vector3.x);
-            }
-            else
-            {
-                this._camPos.x = vector3.x;
+                vector3.x = Math.min(Math.ceil(this._camPos.x) - .001, vector3.x);
             }
 
             if([1, 2, 3].includes(i) && this._peeked[1] === false)
             {
-                this._camPos.y = Math.max(Math.floor(this._camPos.y), vector3.y);
+                vector3.y = Math.max(Math.floor(this._camPos.y) + .001, vector3.y);
             }
             else if([5, 6, 7].includes(i) && this._peeked[3] === false)
             {
-                this._camPos.y = Math.min(Math.ceil(this._camPos.y) - .0000001, vector3.y);
-            }
-            else
-            {
-                this._camPos.y = vector3.y;
+                vector3.y = Math.min(Math.ceil(this._camPos.y) - .001, vector3.y);
             }
 
             let floored = this._camPos.floor();
@@ -255,25 +252,23 @@ export default class Terrain extends Rasher.Entity
 
                     if(pointInVertex(floored, [a, b, c]))
                     {
-                        //camera
-                        let pos = new Calculus.Vector3(local.x, local.y, 0); // x-y pos ignoring current z
-                        let dir = new Calculus.Vector3(0, 0, 1); // straight up
-
-                        // plane
-                        let ab = b.add(a.multiply(-1));
-                        let ac = c.add(a.multiply(-1));
-                        let normal = ab.crossProduct(ac);
-
-                        let t = (normal.dotProduct(a) - normal.dotProduct(pos)) / normal.dotProduct(dir);
-
-                        pos = pos.add(dir.multiply(t));
-
-                        vector3.z = Math.max(1, Math.min(1.9, floored.z + pos.z));
+                        let pos = Calculus.Plane.fromPoints(a, b, c).intersectsAt(new Calculus.Line(
+                            new Calculus.Vector3(local.x, local.y, 0),
+                            new Calculus.Vector3(local.x, local.y, 1)
+                        ));
+                        
+                        if([...pos].every(d => !Number.isNaN(d)))
+                        {
+                            vector3.z = Math.max(1, Math.min(1.9, floored.z + pos.z));
+                        }
                     }
                 }
             }
-
-            this._camPos.z = vector3.z;
+            
+            if(Math.abs(this._camPos.z - vector3.z) <= .25)
+            {
+                this._camPos = vector3;
+            }
         }
 
     }
