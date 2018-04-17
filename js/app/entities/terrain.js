@@ -216,6 +216,46 @@ export default class Terrain extends Rasher.Entity
 
         if(delta.magnitude > 0)
         {
+            let floored = this._camPos.floor();
+            let local = this._camPos.add(floored.multiply(-1));
+            let tile = this._terrain[floored.z][floored.y][floored.x];
+    
+            if(tile !== undefined && this._tiles.hasOwnProperty(tile))
+            {
+                let vertices = this._tiles[tile].vertices;
+        
+                for(let i = 0; i < vertices.length; i += 3)
+                {
+                    let a = new Calculus.Vector3(...vertices[i + 0]);
+                    let b = new Calculus.Vector3(...vertices[i + 1]);
+                    let c = new Calculus.Vector3(...vertices[i + 2]);
+            
+                    if(pointInVertex(floored, [
+                            a,
+                            b,
+                            c
+                        ]))
+                    {
+                        let pos = Calculus.Plane.fromPoints(a, b, c).intersectsAt(new Calculus.Line(
+                            new Calculus.Vector3(local.x, local.y, 0),
+                            new Calculus.Vector3(local.x, local.y, 1)
+                        ));
+                
+                        if([...pos].every(d => !Number.isNaN(d)))
+                        {
+                            vector3.z = Math.max(1, Math.min(1.9, floored.z + pos.z));
+                        }
+                    }
+                }
+            }
+            
+            let threshold
+    
+            if(Math.abs(this._camPos.z - vector3.z) <= .25)
+            {
+                this._camPos.z = vector3.z;
+            }
+    
             let i = (Math.round(delta.angle) + 360) % 360 / 45;
 
             if([0, 1, 7].includes(i) && this._peeked[0] === false)
@@ -235,41 +275,8 @@ export default class Terrain extends Rasher.Entity
             {
                 vector3.y = Math.min(Math.ceil(this._camPos.y) - .001, vector3.y);
             }
-
-            let floored = this._camPos.floor();
-            let local = this._camPos.add(floored.multiply(-1));
-            let tile = this._terrain[floored.z][floored.y][floored.x];
-
-            if(tile !== undefined && this._tiles.hasOwnProperty(tile))
-            {
-                let vertices = this._tiles[tile].vertices;
-
-                for(let i = 0; i < vertices.length; i += 3)
-                {
-                    let a = new Calculus.Vector3(...vertices[i + 0]);
-                    let b = new Calculus.Vector3(...vertices[i + 1]);
-                    let c = new Calculus.Vector3(...vertices[i + 2]);
-
-                    if(pointInVertex(floored, [a, b, c]))
-                    {
-                        let pos = Calculus.Plane.fromPoints(a, b, c).intersectsAt(new Calculus.Line(
-                            new Calculus.Vector3(local.x, local.y, 0),
-                            new Calculus.Vector3(local.x, local.y, 1)
-                        ));
-                        
-                        if([...pos].every(d => !Number.isNaN(d)))
-                        {
-                            vector3.z = Math.max(1, Math.min(1.9, floored.z + pos.z));
-                        }
-                    }
-                }
-            }
-            
-            if(Math.abs(this._camPos.z - vector3.z) <= .25)
-            {
-                this._camPos = vector3;
-            }
+    
+            this._camPos.z = vector3.z;
         }
-
     }
 }
