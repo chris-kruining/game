@@ -5,13 +5,14 @@ import * as Calculus from '../../math/exports.js';
 
 export default class Digimon extends Rasher.Entity
 {
-    constructor(scene, key, srcVec4, space, pos, speed)
+    constructor(scene, key, srcVec4, space, pos, speed, xBias)
     {
         super();
         
         this.srcVec4 = srcVec4;
         this.space = space;
         this.pos = pos;
+        this.xBias = xBias;
         this.speed = speed;
         this.origSize = null;
         this.origPos = null;
@@ -71,7 +72,7 @@ export default class Digimon extends Rasher.Entity
             this.sprite.size = this.origSize.multiply(renderer.width / 700);
             // this.sprite.size = this.origSize.multiply(3);
             this.sprite.position = new Calculus.Vector2(
-                renderer.width / 7 * (this.pos + 1) + 40 * (this.pos - 2),
+                renderer.width / 7 * (this.pos + 1) + 40 * (this.pos - 2) + this.xBias,
                 renderer.height * 2 / 3 - this.sprite.size.y
             );
         }
