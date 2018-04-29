@@ -4,9 +4,10 @@ export default class Animation
 {
     static ease(callback, options = {})
 {
-    let {duration, easing} = Object.assign({
+    let {duration, easing, returnAt} = Object.assign({
         duration: 300,
         easing: 'easeInOutCubic',
+        returnAt: null,
     }, options);
 
     let easingFunctions = {
@@ -47,6 +48,7 @@ export default class Animation
     {
         let start;
         let elapsed;
+        let resolved = false;
 
         let animation = (time = 0) =>
         {
@@ -64,6 +66,12 @@ export default class Animation
             if(elapsed < duration)
             {
                 requestAnimationFrame(time => animation(time));
+                
+                if(!Number.isNaN(returnAt) && returnAt !== null && elapsed >= returnAt && resolved === false)
+                {
+                    resolved = true;
+                    r();
+                }
             }
             else
             {
