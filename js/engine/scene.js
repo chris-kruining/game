@@ -1,7 +1,6 @@
 'use strict';
 
 import Renderer from './graphics/renderer.js';
-import RenderElement from './graphics/renderElement.js';
 import Resources from './network/resources.js';
 import Config from './config.js';
 import Input from './input.js';
@@ -73,6 +72,7 @@ export default class Scene
         }
 
         this.state = Scene.playing;
+        this.onPlay();
 
         this.loopInterval = setInterval(() => this.interval(), Config.tickSpeed);
         this.renderer.play();
@@ -81,14 +81,21 @@ export default class Scene
     pause()
     {
         this.state = Scene.paused;
+        this.onPause();
     }
 
     stop()
     {
         this.state = Scene.stopped;
+        this.onStop();
+        
         clearInterval(this.loopInterval);
         this.renderer.stop();
     }
+    
+    onPlay(){}
+    onPause(){}
+    onStop(){}
 
     set owner(owner)
     {
