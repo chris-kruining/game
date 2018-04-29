@@ -24,10 +24,6 @@ export default class Player extends Rasher.Entity
         return this.sprite.load().then(img =>
         {
             this.sprite.size = new Calculus.Vector2(this.size, this.size * 2);
-            this.sprite.position = new Calculus.Vector2(
-                this.renderer.width - this.sprite.size.x,
-                this.renderer.height - this.sprite.size.y
-            ).multiply(.5);
             this.sprite._srcSize = new Calculus.Vector2(19, 38);
 
             let frameBlender = () => Rasher.Animation.ease(f =>
@@ -52,7 +48,7 @@ export default class Player extends Rasher.Entity
 
     render(renderer)
     {
-
+        this.sprite.position = renderer.size.subtract(this.sprite.size).multiply(.5);
     }
 
     draw(renderer)

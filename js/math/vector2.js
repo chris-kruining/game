@@ -40,6 +40,21 @@ export default class Vector2 {
         return new Vector2(this.x + x, this.y + y);
     }
 
+    subtract(x, y)
+    {
+        if(x instanceof Vector2)
+        {
+            y = x.y;
+            x = x.x;
+        }
+        else if(Number.isInteger(x) && y === undefined)
+        {
+            y = x;
+        }
+
+        return new Vector2(this.x - x, this.y - y);
+    }
+
     multiply(x, y)
     {
         if(x instanceof Vector2)

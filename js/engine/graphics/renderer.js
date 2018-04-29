@@ -2,8 +2,7 @@
 
 import ShaderProgram from './shaderProgram.js';
 import RenderElement from './renderElement.js';
-import Matrix4 from '../../math/matrix4.js';
-import Vector3 from '../../math/vector3.js';
+import * as Calculus from '../../math/exports.js';
 
 export default class Renderer
 {
@@ -102,6 +101,11 @@ export default class Renderer
     get height()
     {
         return this.canvas.height;
+    }
+    
+    get size()
+    {
+        return new Calculus.Vector2(this.width, this.height);
     }
 
     get gl()
