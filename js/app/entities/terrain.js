@@ -39,9 +39,9 @@ export default class Terrain extends Rasher.Entity
 
         this._debug = document.createElement('span');
         this._debug.style.position = 'fixed';
-        this._debug.style.top = '.33em';
-        this._debug.style.left = '.33em';
-        this._debug.style.fontSize = '3em';
+        this._debug.style.top = '.5em';
+        this._debug.style.left = '.5em';
+        this._debug.style.fontSize = '2em';
         this._debug.style.color = '#eee';
         this._debug.style.zIndex = '1000';
 
@@ -104,12 +104,6 @@ export default class Terrain extends Rasher.Entity
                             .multiply(this._unit)
                             .add(new Calculus.Vector2(renderer.width, renderer.height).multiply(.5));
 
-                        if(x === 5 && y === 0)
-                        {
-                            this.sprite.filterMask.x = 1;
-                            this.sprite.filterMask.z = 1;
-                        }
-
                         for(let i of this._tiles[tile].stack)
                         {
                             this.sprite._srcPosition = new Calculus.Vector2(i.x, i.y).multiply(this._unit);
@@ -119,9 +113,6 @@ export default class Terrain extends Rasher.Entity
                         if(this._renderCallback !== null && pos.equals(this._camPos.floor()))
                         {
                             this.sprite._srcPosition = new Calculus.Vector2(5, 8).multiply(this._unit);
-
-                            this._peek(x, y, z, renderer);
-
                             this._renderCallback(pos);
                         }
 
@@ -136,93 +127,25 @@ export default class Terrain extends Rasher.Entity
     {
     }
 
-    _peek(x, y, z, renderer)
-    {
-        let draw = (v2, pIndex) => {
-            let peek = this._camPos.add(...v2.map(v => v * -1), 0);
-
-            this.sprite.position = new Calculus.Vector2(
-                x + peek.y - y - peek.x + RENDER_OFFSET,
-                .5 * (x - peek.x + y - peek.y + RENDER_OFFSET),
-            )
-                .multiply(this._unit)
-                .add(new Calculus.Vector2(renderer.width, renderer.height).multiply(.5));
-
-            peek = this._camPos.add(...v2, 0).floor();
-
-            let tile;
-
-            try
-            {
-                tile = this._terrain[peek.z][peek.y][peek.x];
-            }
-            catch(e){}
-
-            if(tile === undefined)
-            {
-                return;
-            }
-
-            vertexSearch:
-            for(let vertices of tile.map(t => this._tiles[t].vertices))
-            {
-                for(let i = 0; i < vertices.length; i += 3)
-                {
-                    let a = vertices[i + 0];
-                    let b = vertices[i + 1];
-                    let c = vertices[i + 2];
-
-                    if([a, b, c].map(v => Math.abs(v[2] + z - this._camPos.z)).some(v => v <= .25))
-                    {
-                        this.sprite.filterMask.y = 1;
-
-                        this._peeked[pIndex] = true;
-
-                        break vertexSearch;
-                    }
-                }
-            }
-
-            if(this.sprite.filterMask.y === 0)
-            {
-                this.sprite.filterMask.x = 1;
-
-                this._peeked[pIndex] = false;
-            }
-
-            this.sprite.render();
-            this.sprite.filterMask = new Calculus.Vector4(0, 0, 0, 0);
-        };
-
-        draw([-1,  0], 0);
-        draw([ 0, -1], 1);
-        draw([ 1,  0], 2);
-        draw([ 0,  1], 3);
-    }
-
-    get camera()
-    {
-        return this._camPos;
-    }
-
-    set camera(vector3)
-    {
-        this._camPos = vector3;
-    }
-
     moveTo(vector3)
     {
         let delta = this._camPos.subtract(vector3);
 
         if(delta.magnitude > 0)
         {
-            let floored = this._camPos.floor();
-            let local = this._camPos.add(floored.multiply(-1));
+            let floored = vector3.floor();
+            let local = vector3.subtract(floored);
             let tile = this._terrain[floored.z][floored.y][floored.x];
+            let zIsQueried = true;
     
             if(tile !== undefined && this._tiles.hasOwnProperty(tile))
             {
                 let vertices = this._tiles[tile].vertices;
+                
+                if(vertices.length === 0)
+                {
+                    zIsQueried = false;
+                }
         
                 for(let i = 0; i < vertices.length; i += 3)
                 {
@@ -230,11 +153,7 @@ export default class Terrain extends Rasher.Entity
                     let b = new Calculus.Vector3(...vertices[i + 1]);
                     let c = new Calculus.Vector3(...vertices[i + 2]);
             
-                    if(pointInVertex(floored, [
-                            a,
-                            b,
-                            c
-                        ]))
+                    if(pointInVertex(floored, [ a, b, c ]))
                     {
                         let pos = Calculus.Plane.fromPoints(a, b, c).intersectsAt(new Calculus.Line(
                             new Calculus.Vector3(local.x, local.y, 0),
@@ -249,34 +168,41 @@ export default class Terrain extends Rasher.Entity
                 }
             }
             
-            let threshold
-    
-            if(Math.abs(this._camPos.z - vector3.z) <= .25)
-            {
-                this._camPos.z = vector3.z;
-            }
-    
+            let threshold = .25;
+            let deltaZ = zIsQueried
+                ? Math.abs(this._camPos.z - vector3.z)
+                : 2 * threshold;
             let i = (Math.round(delta.angle) + 360) % 360 / 45;
-
-            if([0, 1, 7].includes(i) && this._peeked[0] === false)
+    
+            if([0, 1, 7].includes(i) && deltaZ > threshold)
             {
                 vector3.x = Math.max(Math.floor(this._camPos.x) + .001, vector3.x);
             }
-            else if([3, 4, 5].includes(i) && this._peeked[2] === false)
+            else if([3, 4, 5].includes(i) && deltaZ > threshold)
             {
                 vector3.x = Math.min(Math.ceil(this._camPos.x) - .001, vector3.x);
             }
 
-            if([1, 2, 3].includes(i) && this._peeked[1] === false)
+            if([1, 2, 3].includes(i) && deltaZ > threshold)
             {
                 vector3.y = Math.max(Math.floor(this._camPos.y) + .001, vector3.y);
             }
-            else if([5, 6, 7].includes(i) && this._peeked[3] === false)
+            else if([5, 6, 7].includes(i) && deltaZ > threshold)
             {
                 vector3.y = Math.min(Math.ceil(this._camPos.y) - .001, vector3.y);
             }
     
-            this._camPos.z = vector3.z;
+            this._camPos = vector3;
         }
+    }
+    
+    get camera()
+    {
+        return this._camPos;
+    }
+    
+    set camera(vector3)
+    {
+        this._camPos = vector3;
     }
 }
