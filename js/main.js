@@ -1,5 +1,6 @@
 'use strict';
 
+import * as Utilities from './utility/exports.js';
 import Game from './engine/game.js';
 import Battle from './app/scenes/battle.js';
 import Exploring from './app/scenes/exploring.js';
