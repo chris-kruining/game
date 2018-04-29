@@ -134,16 +134,11 @@ export default class Terrain extends Rasher.Entity
             let floored = vector3.floor();
             let local = vector3.subtract(floored);
             let tile = this._terrain[floored.z][floored.y][floored.x];
-            let zIsQueried = true;
+            let zIsQueried = false;
     
             if(tile !== undefined && this._tiles.hasOwnProperty(tile))
             {
                 let vertices = this._tiles[tile].vertices;
-                
-                if(vertices.length === 0)
-                {
-                    zIsQueried = false;
-                }
         
                 for(let i = 0; i < vertices.length; i += 3)
                 {
@@ -161,31 +156,30 @@ export default class Terrain extends Rasher.Entity
                         if([...pos].every(d => !Number.isNaN(d)))
                         {
                             vector3.z = floored.z + pos.z;
+                            zIsQueried = true
                         }
                     }
                 }
             }
             
             let threshold = .25;
-            let deltaZ = zIsQueried
-                ? Math.abs(this._camPos.z - vector3.z)
-                : 2 * threshold;
+            let deltaZ = Math.abs(this._camPos.z - vector3.z);
             let i = (Math.round(delta.angle) + 360) % 360 / 45;
     
-            if([0, 1, 7].includes(i) && deltaZ > threshold)
+            if([0, 1, 7].includes(i) && (deltaZ > threshold || zIsQueried === false))
             {
                 vector3.x = Math.max(Math.floor(this._camPos.x) + .001, vector3.x);
             }
-            else if([3, 4, 5].includes(i) && deltaZ > threshold)
+            else if([3, 4, 5].includes(i) && (deltaZ > threshold || zIsQueried === false))
             {
                 vector3.x = Math.min(Math.ceil(this._camPos.x) - .001, vector3.x);
             }
 
-            if([1, 2, 3].includes(i) && deltaZ > threshold)
+            if([1, 2, 3].includes(i) && (deltaZ > threshold || zIsQueried === false))
             {
                 vector3.y = Math.max(Math.floor(this._camPos.y) + .001, vector3.y);
             }
-            else if([5, 6, 7].includes(i) && deltaZ > threshold)
+            else if([5, 6, 7].includes(i) && (deltaZ > threshold || zIsQueried === false))
             {
                 vector3.y = Math.min(Math.ceil(this._camPos.y) - .001, vector3.y);
             }
