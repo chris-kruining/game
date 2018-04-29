@@ -30,10 +30,8 @@ export default class Terrain extends Rasher.Entity
         this._tiles = {};
         this._renderer = renderer;
         this._terrain = terrain;
-        this._peeked = new Array(4).fill(false);
         this._unit = 64;
         this._camPos = new Calculus.Vector3(0);
-        this._dimensions = spriteDimensions;
         this._renderCallback = renderCallback;
         this.sprite = null;
 
@@ -162,7 +160,7 @@ export default class Terrain extends Rasher.Entity
                 
                         if([...pos].every(d => !Number.isNaN(d)))
                         {
-                            vector3.z = Math.max(1, Math.min(1.9, floored.z + pos.z));
+                            vector3.z = floored.z + pos.z;
                         }
                     }
                 }
