@@ -1,8 +1,13 @@
 'use strict';
 
-export default class Music
+import Sound from './sound.js';
+
+export default class Music extends Sound
 {
-    constructor()
+    constructor(key)
     {
+        super(key, 'music', .25);
+    
+        this.audio.loop = true;
     }
 }
