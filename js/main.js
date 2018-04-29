@@ -17,7 +17,7 @@ function main()
     Promise.all(scenes.map(scene => game.addScene(scene))).then(loadedScenes => {
         scenes = loadedScenes;
 
-        game.selectScene(scenes[0]);
+        game.selectScene(scenes[1]);
     });
 }
 
