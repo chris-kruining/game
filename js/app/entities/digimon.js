@@ -49,14 +49,6 @@ export default class Digimon extends Rasher.Entity
             });
     
             frameBlender();
-            
-            Rasher.Animation.ease(f =>
-            {
-                this.sprite.filterMask = new Calculus.Vector4(1 - f, 1 - f, 1 - f, 0);
-            }, {
-                duration: Math.random() * 1500 + 1000,
-                easing: 'easeOutCubic',
-            });
         })
     }
     
@@ -73,7 +65,7 @@ export default class Digimon extends Rasher.Entity
             // this.sprite.size = this.origSize.multiply(3);
             this.sprite.position = new Calculus.Vector2(
                 renderer.width / 7 * (this.pos + 1) + 40 * (this.pos - 2) + this.xBias,
-                renderer.height * 2 / 3 - this.sprite.size.y
+                renderer.height * 4 / 5 - this.sprite.size.y
             );
         }
         
@@ -89,5 +81,17 @@ export default class Digimon extends Rasher.Entity
     loop()
     {
     
+    }
+    
+    spawn(resolveAt = null)
+    {
+        return Rasher.Animation.ease(f =>
+        {
+            this.sprite.filterMask = new Calculus.Vector4(1 - f, 1 - f, 1 - f, 0);
+        }, {
+            duration: Math.random() * 1500 + 1000,
+            easing: 'easeOutCubic',
+            returnAt: resolveAt,
+        });
     }
 }
