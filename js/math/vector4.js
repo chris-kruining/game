@@ -49,11 +49,11 @@ export default class Vector4
             w = x.w;
             x = x.x;
         }
-        else if(Number.isInteger(x) && y === undefined)
+        else if(!Number.isNaN(x) && y === undefined)
         {
             y = x;
-            w = x;
             z = x;
+            w = x;
         }
 
         return new Vector4(this.x * x, this.y * y, this.z * z, this.w * w);
