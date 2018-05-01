@@ -3,6 +3,7 @@
 import * as Rasher from '../../rasher.js';
 import * as Calculus from '../../math/exports.js';
 import Digimon from '../entities/digimon.js';
+import HUD from '../entities/hud.js';
 
 const enemies = [
     [ 5, 10, 10, 129, 175, 'giga', 'beelzemon_blast_mode', 225, 10 ],
@@ -19,24 +20,25 @@ export default class Battle extends Rasher.Scene
         this.add(new Rasher.Background(this.renderer, 'background'));
         this.add(new Rasher.Background(this.renderer, 'background_overlay'));
         this.add(new Rasher.Background(this.renderer, 'attack')).then(a => a.blink(500));
-        
+
         this.digimon = Object.entries(enemies)
             .map(([i, [x, y, s, w, h, r, n, a, b]]) => new Digimon(this, n, new Calculus.Vector4(x, y, w, h), s, Number.parseInt(i), a, b));
-        
+
         this.digimon.forEach(d => this.add(d));
+    
+        this.add(new HUD(this.renderer, 'foreground'));
         
-        this.add(new Rasher.Background(this.renderer, 'foreground'));
-        this.add(new Rasher.Texture(this.renderer, 'frame')).then(el => {
-            el._srcSize = el._imageSize;
-            el.size = el._imageSize;
-            el.position = new Calculus.Vector2(130, 70);
-        });
-        
-        this.add(new Rasher.Texture(this.renderer, 'frame')).then(el => {
-            el._srcSize = el._imageSize;
-            el.size = el._imageSize;
-            el.position = new Calculus.Vector2(130, 210);
-        });
+        // this.add(new Rasher.Texture(this.renderer, 'frame')).then(el => {
+        //     el._srcSize = el._imageSize;
+        //     el.size = el._imageSize;
+        //     el.position = new Calculus.Vector2(130, 70);
+        // });
+        //
+        // this.add(new Rasher.Texture(this.renderer, 'frame')).then(el => {
+        //     el._srcSize = el._imageSize;
+        //     el.size = el._imageSize;
+        //     el.position = new Calculus.Vector2(130, 210);
+        // });
         
         this.music = new Rasher.Audio.Music('music');
     }
@@ -47,7 +49,7 @@ export default class Battle extends Rasher.Scene
     
     onPlay()
     {
-        Promise.chain(this.digimon, d => d.spawn(100));
+        // Promise.chain(this.digimon, d => d.spawn(100));
         this.music.play();
     }
     
