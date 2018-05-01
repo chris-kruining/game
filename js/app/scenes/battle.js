@@ -49,7 +49,7 @@ export default class Battle extends Rasher.Scene
     
     onPlay()
     {
-        // Promise.chain(this.digimon, d => d.spawn(100));
+        Promise.chain(this.digimon, d => d.spawn(100));
         this.music.play();
     }
     
