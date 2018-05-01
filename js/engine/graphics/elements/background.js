@@ -21,7 +21,7 @@ export default class Background extends Texture
 
     render(i)
     {
-        this.size = new Vector2(this._renderer.width, this._renderer.height);
+        this.size = this._renderer.size;
 
         return super.render(i);
     }
