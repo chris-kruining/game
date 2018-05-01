@@ -2,7 +2,7 @@
 
 export default
 
-class Vector4
+export default class Vector4
 {
     constructor(x, y, z, w)
     {

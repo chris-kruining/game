@@ -17,7 +17,6 @@ export default class Digimon extends Rasher.Entity
         this.origSize = null;
         this.origPos = null;
         this.frame = Math.floor(Math.random() * 3);
-        this.alphas = [ 1, 1 ];
         this.positions = [ this.srcVec4.x, 0 ];
         this.sprite = new Rasher.Sprite(scene.renderer, key);
     }
@@ -62,7 +61,6 @@ export default class Digimon extends Rasher.Entity
         if(this.origSize !== null)
         {
             this.sprite.size = this.origSize.multiply(renderer.width / 700);
-            // this.sprite.size = this.origSize.multiply(3);
             this.sprite.position = new Calculus.Vector2(
                 renderer.width / 7 * (this.pos + 1) + 40 * (this.pos - 2) + this.xBias,
                 renderer.height * 4 / 5 - this.sprite.size.y
@@ -70,12 +68,7 @@ export default class Digimon extends Rasher.Entity
         }
         
         this.sprite._srcPosition.x = this.positions[0];
-        this.sprite.alpha = this.alphas[0];
         this.sprite.render();
-        
-        // this.sprite._srcPosition.x = this.positions[1];
-        // this.sprite.alpha = this.alphas[1];
-        // this.sprite.render();
     }
     
     loop()
