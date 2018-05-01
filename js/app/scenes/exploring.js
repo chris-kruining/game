@@ -19,7 +19,7 @@ export default class Exploring extends Rasher.Scene
         player = new Player(this.renderer, 'player');
         terrain = new Terrain(
             this.renderer,
-            'forrestTiles',
+            'forrest',
             [
                 [
                     [[84], [84], [84], [84], [84], [84], [84], [84], [84], [84]],
@@ -120,8 +120,7 @@ export default class Exploring extends Rasher.Scene
     {
         return {
             resources: {
-                forrest: 'img/digimon/maps/forrest.png',
-                forrestTiles: 'js/app/resources/tiles/forrest.json',
+                forrest: 'js/app/resources/tiles/forrest.json',
                 joystick: 'img/joystick.png',
                 player: 'img/digimon/characters/female_red.png',
                 music: 'audio/digimon/dawn/battle_02.mp3',
