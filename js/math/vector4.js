@@ -1,6 +1,6 @@
 'use strict';
 
-export default
+import Vector2 from './vector2.js';
 
 export default class Vector4
 {
@@ -105,6 +105,16 @@ export default class Vector4
     set w(w)
     {
         this._w = w;
+    }
+    
+    get xy()
+    {
+        return new Vector2(this.x, this.y);
+    }
+    
+    get zw()
+    {
+        return new Vector2(this.z, this.w);
     }
     
     get normalized()
