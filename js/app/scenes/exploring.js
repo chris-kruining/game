@@ -7,17 +7,14 @@ import Joystick from '../entities/joystick.js';
 import Player from '../entities/player.js';
 
 let cameraDelta = new Calculus.Vector2(0);
-let joystick = null;
-let terrain = null;
-let player = null;
 
 export default class Exploring extends Rasher.Scene
 {
     setup(game)
     {
-        joystick = new Joystick(this.renderer, 'joystick');
-        player = new Player(this.renderer, 'player');
-        terrain = new Terrain(
+        this.joystick = new Rasher.UI.Joystick(this.renderer, 'joystick');
+        this.player = new Player(this.renderer, 'player');
+        this.terrain = new Terrain(
             this.renderer,
             'forrest',
             [
@@ -75,15 +72,15 @@ export default class Exploring extends Rasher.Scene
             ],
             new Calculus.Vector2(10),
             (pos) => {
-                player.draw(this.renderer);
+                this.player.draw(this.renderer);
             }
         );
 
-        this.add(terrain);
-        this.add(player);
-        this.add(joystick);
-
-        terrain.camera = player.position;
+        this.add(this.terrain);
+        this.add(this.player);
+        this.add(this.joystick);
+    
+        this.terrain.camera = this.player.position;
 
         this.input.listen({
             forward: state => {
@@ -103,17 +100,17 @@ export default class Exploring extends Rasher.Scene
 
     loop(game)
     {
-        if(terrain === null)
+        if(this.terrain === null)
         {
             return;
         }
 
-        let delta = cameraDelta.add(joystick.movement.multiply(-1)).max();
+        let delta = cameraDelta.add(this.joystick.movement.multiply(-1)).max();
         let movement = delta.clone;
         movement.angle -= 45;
-
-        terrain.moveTo(terrain.camera.add(new Calculus.Vector3(...movement.multiply(-.25), 0)));
-        player.movement = delta;
+    
+        this.terrain.moveTo(this.terrain.camera.add(new Calculus.Vector3(...movement.multiply(-.25), 0)));
+        this.player.movement = delta;
     }
 
     static get config()

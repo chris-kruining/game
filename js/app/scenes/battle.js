@@ -74,13 +74,19 @@ export default class Battle extends Rasher.Scene
             .then(el => {
                 el._srcSize = el._imageSize;
                 el.size = el._imageSize;
-                el.position = new Calculus.Vector2(160, 80);
+                el.position = new Calculus.Vector2(140, 80);
             });
         this.hud.add(new Rasher.Sprite(this.renderer, 'frame'))
             .then(el => {
                 el._srcSize = el._imageSize;
                 el.size = el._imageSize;
-                el.position = new Calculus.Vector2(160, 220);
+                el.position = new Calculus.Vector2(140, 220);
+            });
+        this.hud.add(new Rasher.UI.Button(this.renderer, 'frame'))
+            .then(el => {
+                el._srcSize = el._imageSize;
+                el.size = el._imageSize;
+                el.position = new Calculus.Vector2(140, 360);
             });
 
         this.add(this.hud);
