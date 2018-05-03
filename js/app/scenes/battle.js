@@ -25,44 +25,89 @@ export default class Battle extends Rasher.Scene
             .map(([i, [x, y, s, w, h, r, n, a, b]]) => new Digimon(this, n, new Calculus.Vector4(x, y, w, h), s, Number.parseInt(i), a, b));
 
         this.digimon.forEach(d => this.add(d));
-    
-        this.add(new HUD(this.renderer, 'foreground'));
-        
-        // this.add(new Rasher.Texture(this.renderer, 'frame')).then(el => {
-        //     el._srcSize = el._imageSize;
-        //     el.size = el._imageSize;
-        //     el.position = new Calculus.Vector2(130, 70);
-        // });
-        //
-        // this.add(new Rasher.Texture(this.renderer, 'frame')).then(el => {
-        //     el._srcSize = el._imageSize;
-        //     el.size = el._imageSize;
-        //     el.position = new Calculus.Vector2(130, 210);
-        // });
-        
+
+        this.hud = new HUD(this.renderer, 'foreground', [
+            // 0 - top-left
+            [
+                [ new Calculus.Vector4(0, 0, 400, 600), false ],
+            ],
+
+            // 1 - top
+            [
+                [ new Calculus.Vector4(400, 0, 1, 100), true ],
+                [ new Calculus.Vector4(401, 0, 100, 100), false ],
+                [ new Calculus.Vector4(702, 0, 1, 100), true ],
+            ],
+
+            // 2 - top-right
+            [
+                [ new Calculus.Vector4(2200, 0, 360, 360), false ],
+            ],
+
+            // 3 - right
+            [
+                [ new Calculus.Vector4(2360, 360, 200, 1), true ],
+            ],
+
+            // 4 - bottom-right
+            [
+                [ new Calculus.Vector4(2200, 1000, 360, 440), false ],
+            ],
+
+            // 5 - bottom
+            [
+                [ new Calculus.Vector4(800, 940, 10, 500), true ],
+            ],
+
+            // 6 - bottom-left
+            [
+                [ new Calculus.Vector4(0, 1000, 800, 440), false ],
+            ],
+
+            // 7 - left
+            [
+                [ new Calculus.Vector4(0, 600, 400, 1), true ],
+            ],
+        ]);
+
+        this.hud.add(new Rasher.Sprite(this.renderer, 'frame'))
+            .then(el => {
+                el._srcSize = el._imageSize;
+                el.size = el._imageSize;
+                el.position = new Calculus.Vector2(160, 80);
+            });
+        this.hud.add(new Rasher.Sprite(this.renderer, 'frame'))
+            .then(el => {
+                el._srcSize = el._imageSize;
+                el.size = el._imageSize;
+                el.position = new Calculus.Vector2(160, 220);
+            });
+
+        this.add(this.hud);
+
         this.music = new Rasher.Audio.Music('music');
     }
-    
+
     loop(game)
     {
     }
-    
+
     onPlay()
     {
         Promise.chain(this.digimon, d => d.spawn(100));
         this.music.play();
     }
-    
+
     onPause()
     {
         this.music.pause();
     }
-    
+
     onStop()
     {
         this.music.stop();
     }
-    
+
     static get config()
     {
         return {
@@ -75,11 +120,11 @@ export default class Battle extends Rasher.Scene
                 music: 'audio/digimon/dawn/battle_02.mp3',
             }, enemies.reduce((t, e) => {
                 t[e[6]] = `img/digimon/${e[5]}/${e[6]}.png`;
-                
+
                 return t;
             }, {})),
             input: {
-            
+
             },
         };
     }
