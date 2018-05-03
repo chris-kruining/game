@@ -9,4 +9,18 @@ export default class Sprite extends Texture
     {
         super(renderer, key);
     }
+
+    render(renderer, scalar = null)
+    {
+        let pos = this.position;
+        let size = this.size;
+
+        this.position = this.position.multiply(scalar || 1);
+        this.size = this.size.multiply(scalar || 1);
+
+        super.render(renderer);
+
+        this.position = pos;
+        this.size = size;
+    }
 }
