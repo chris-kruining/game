@@ -9,6 +9,11 @@ export default class Rectangle
         this._w = w;
         this._h = h;
     }
+    
+    includes(v2)
+    {
+        return v2.x >= this._x && v2.x <= this._x + this._w && v2.y >= this._y && v2.y <= this._y + this._h;
+    }
 
     static clone(rectangle)
     {
