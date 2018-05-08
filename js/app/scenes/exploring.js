@@ -3,7 +3,6 @@
 import * as Rasher from '../../rasher.js';
 import * as Calculus from '../../math/exports.js';
 import Terrain from '../entities/terrain.js';
-import Joystick from '../entities/joystick.js';
 import Player from '../entities/player.js';
 
 let cameraDelta = new Calculus.Vector2(0);
