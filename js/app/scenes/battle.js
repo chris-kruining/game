@@ -82,11 +82,30 @@ export default class Battle extends Rasher.Scene
                 el.size = el._imageSize;
                 el.position = new Calculus.Vector2(140, 220);
             });
-        this.hud.add(new Rasher.UI.Button(this.renderer, 'frame'))
+        
+        this.hud.add(new Rasher.UI.Button(this.renderer, 'button'))
             .then(el => {
                 el._srcSize = el._imageSize;
                 el.size = el._imageSize;
-                el.position = new Calculus.Vector2(140, 360);
+                el.position = new Calculus.Vector4(790, 250, 0, 1);
+            });
+        this.hud.add(new Rasher.UI.Button(this.renderer, 'button'))
+            .then(el => {
+                el._srcSize = el._imageSize;
+                el.size = el._imageSize;
+                el.position = new Calculus.Vector4(1110, 250, 0, 1);
+            });
+        this.hud.add(new Rasher.UI.Button(this.renderer, 'button'))
+            .then(el => {
+                el._srcSize = el._imageSize;
+                el.size = el._imageSize;
+                el.position = new Calculus.Vector4(1430, 250, 0, 1);
+            });
+        this.hud.add(new Rasher.UI.Button(this.renderer, 'button'))
+            .then(el => {
+                el._srcSize = el._imageSize;
+                el.size = el._imageSize;
+                el.position = new Calculus.Vector4(1750, 250, 0, 1);
             });
 
         this.add(this.hud);
@@ -123,6 +142,7 @@ export default class Battle extends Rasher.Scene
                 attack: 'img/digimon/scenes/backgrounds/attack-2.png',
                 foreground: 'img/digimon/scenes/foregrounds/battle.png',
                 frame: 'img/digimon/scenes/foregrounds/timeline-frame.png',
+                button: 'img/digimon/scenes/foregrounds/button.png',
                 music: 'audio/digimon/dawn/battle_02.mp3',
             }, enemies.reduce((t, e) => {
                 t[e[6]] = `img/digimon/${e[5]}/${e[6]}.png`;
