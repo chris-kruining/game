@@ -148,7 +148,8 @@ export default class HUD extends Rasher.Entity
 
         for(let entity of this.entities)
         {
-            entity.render(renderer, scalar);
+            entity.scalar = scalar;
+            entity.render(renderer);
         }
     }
 
