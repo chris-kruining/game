@@ -23,7 +23,16 @@ function main()
 }
 
 document.querySelector('button[start]').addEventListener('click', main);
-document.querySelector('button[reload]').addEventListener('click', () => window.location.reload());
+document.querySelector('button[reload]').addEventListener('click', () => caches.keys()
+    .then(names => Promise.all(names
+        .filter(name => [
+            'game-cache-static',
+            'game-cache-dynamic'
+        ].includes(name))
+        .map(name => caches.delete(name))
+    ))
+    .then(window.location.reload())
+);
 document.addEventListener('keydown', e => {
     if(e.keyCode >= 49 && e.keyCode <= 57)
     {
