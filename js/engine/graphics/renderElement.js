@@ -2,7 +2,7 @@
 
 import Renderer from './renderer.js';
 import Buffer from './buffer.js';
-import Vector2 from '../../math/vector2.js';
+import * as Calculus from '../../math/exports.js';
 
 export default class RenderElement
 {
@@ -13,12 +13,12 @@ export default class RenderElement
             throw new Error('argument "renderer" is not an instance of the Renderer class');
         }
 
-        if(!position instanceof Vector2)
+        if(!position instanceof Calculus.Vector2)
         {
             throw new Error('argument "position" is not an instance of the Vector2 class');
         }
 
-        if(!size instanceof Vector2)
+        if(!size instanceof Calculus.Vector2)
         {
             throw new Error('argument "size" is not an instance of the Vector2 class');
         }
@@ -56,6 +56,14 @@ export default class RenderElement
 
     get position()
     {
+        if(this._position instanceof Calculus.Vector4)
+        {
+            return new Calculus.Vector2(
+                this._position.x + this._position.z * this._renderer.width,
+                this._position.y + this._position.w * this._renderer.height
+            );
+        }
+        
         return this._position;
     }
 
@@ -77,8 +85,8 @@ export default class RenderElement
     get info()
     {
         return {
-            x: this._position.x,
-            y: this._position.y,
+            x: this.position.x,
+            y: this.position.y,
             width: this._size.x,
             height: this._size.y,
         };
