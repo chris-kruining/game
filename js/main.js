@@ -13,13 +13,13 @@ let scenes = [
     Battle,
 ];
 
-function main()
+async function main()
 {
-    Promise.all(scenes.map(scene => game.addScene(scene))).then(loadedScenes => {
-        scenes = loadedScenes;
+    await navigator.requestFullscreen();
+    
+    scenes = await Promise.all(scenes.map(scene => game.addScene(scene)));
 
-        game.selectScene(scenes[1]);
-    });
+    game.selectScene(scenes[1]);
 }
 
 document.querySelector('button[start]').addEventListener('click', main);
