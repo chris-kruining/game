@@ -15,7 +15,7 @@ let scenes = [
 
 async function main()
 {
-    await navigator.requestFullscreen();
+    await document.body.requestFullscreen();
     
     scenes = await Promise.all(scenes.map(scene => game.addScene(scene)));
 
