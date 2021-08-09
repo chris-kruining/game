@@ -5,6 +5,7 @@ import Game from './engine/game.js';
 import Battle from './app/scenes/battle.js';
 import Exploring from './app/scenes/exploring.js';
 
+navigator.serviceWorker.register('/worker.js');
 window.mobile = navigator.userAgent.match(/Android|webOS|IPhone|Ipad|Ipod|Windows Phone/i) !== null;
 
 let game = new Game();
